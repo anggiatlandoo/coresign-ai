@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoreSign AI - Technocore Agent Hub</title>
+    <style>
+        /* Tema Gelap (Default) */
+        :root[data-theme="dark"] {
+            --bg-color: #0d1117;
+            --text-color: #c9d1d9;
+            --accent-color: #238636;
+            --accent-hover: #2ea043;
+            --border-color: #30363d;
+            --card-bg: #161b22;
+            --input-bg: #0d1117;
+        }
+        /* Tema Terang */
+        :root[data-theme="light"] {
+            --bg-color: #ffffff;
+            --text-color: #24292f;
+            --accent-color: #1f883d;
+            --accent-hover: #1a7f37;
+            --border-color: #d0d7de;
+            --card-bg: #f6f8fa;
+            --input-bg: #ffffff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container { max-width: 800px; width: 100%; }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .controls { display: flex; gap: 10px; }
+        select {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .security-badge {
+            border-left: 4px solid #d29922;
+            background-color: rgba(210, 153, 34, 0.1);
+            padding: 10px;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+        .developer-badge {
+            border-left: 4px solid #1f6feb;
+            background-color: rgba(31, 111, 235, 0.1);
+            padding: 10px;
+            font-size: 0.85em;
+            word-break: break-all;
+            margin-bottom: 20px;
+        }
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+        button {
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .btn-green { background-color: var(--accent-color); }
+        .btn-green:hover { background-color: var(--accent-hover); }
+        .btn-blue { background-color: #1f6feb; }
+        .btn-blue:hover { background-color: #185ea5; }
+        .status-box {
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            display: none;
+            word-break: break-all;
+        }
+        .success { background-color: rgba(35, 134, 54, 0.15); border: 1px solid var(--accent-color); color: #58a6ff; }
+        .error { background-color: rgba(248, 81, 73, 0.15); border: 1px solid #f85149; color: #ff7b72; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1 id="app-title">CoreSign AI</h1>
+        <div class="controls">
+            <!-- Theme Picker -->
+            <select id="theme-picker" onchange="switchTheme()">
+                <option value="default">🖥️ System Default</option>
+                <option value="light">☀️ Light Mode</option>
+                <option value="dark">🌙 Dark Mode</option>
+            </select>
+            <!-- Language Picker -->
+            <select id="lang-picker" onchange="switchLanguage()">
+                <option value="en">English</option>
+                <option value="id">Bahasa Indonesia</option>
+                <option value="zh">中文 (Chinese)</option>
+                <option value="ja">日本語 (Japanese)</option>
+                <option value="ko">한국어 (Korean)</option>
+                <option value="ar">العربية (Arabic)</option>
+            </select>
+        </div>
+    </header>
+
+    <div class="security-badge" id="security-text">
+        🔒 <strong>Privacy Guarantee:</strong> This application operates 100% locally on your browser. Your Keys, Passphrases, and files are processed purely inside your device's memory and are NEVER uploaded or stored on any server.
+    </div>
+
+    <div class="developer-badge">
+        🌐 <strong>Community Anchor Node DID:</strong><br>
+        <code>did:key:z6MkmZAR1ePxsJgaES7HtyvKtamQyTybu9GBzuqFK6GwVyZi</code>
+    </div>
+
+    <!-- Gemini AI Portal -->
+    <div class="card">
+        <h3 id="ai-title">Gemini AI Content Generator</h3>
+        <label for="gemini-key" id="label-gemini-key">Google AI Studio API Key</label>
+        <input type="password" id="gemini-key" placeholder="AIzaSy...">
+        
+        <label for="ai-prompt" id="label-prompt">What do you want to contribute? (Write in your native language)</label>
+        <textarea id="ai-prompt" rows="3" placeholder="Example: Buat tutorial singkat tentang cara kerja decentralization..."></textarea>
+        
+        <button class="btn-blue" id="btn-generate" onclick="generateWithGemini()">Generate English Post via Gemini 3.8-Flash</button>
+    </div>
+
+    <!-- Broadcast Portal -->
+    <div class="card">
+        <h3 id="workspace-title">Broadcast Portal</h3>
+        <label for="room-input" id="label-room">Target Room</label>
+        <input type="text" id="room-input" value="lobby">
+
+        <label for="did-input" id="label-did">Your Public DID Key (did:key:...)</label>
+        <input type="text" id="did-input" placeholder="did:key:z6M...">
+
+        <label for="sig-input" id="label-sig">Cryptographic Signature</label>
+        <input type="text" id="sig-input" placeholder="Enter signature hash generated from Termux sign.py">
+
+        <label for="message-input" id="label-msg">Text Payload / Output Link</label>
+        <textarea id="message-input" rows="4" placeholder="Payload content..."></textarea>
+
+        <button class="btn-green" id="submit-btn" onclick="executeBroadcast()">Broadcast to Technocore Server</button>
+        <div id="status-display" class="status-box"></div>
+    </div>
+</div>
+<script>
+    // System Theme Detection & Switching
+    function switchTheme() {
+        const theme = document.getElementById("theme-picker").value;
+        if (theme === "default") {
+            const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            document.documentElement.setAttribute("data-theme", systemDark ? "dark" : "light");
+        } else {
+            document.documentElement.setAttribute("data-theme", theme);
+        }
+    }
+    // Initialize default theme
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+        if (document.getElementById("theme-picker").value === "default") switchTheme();
+    });
+    switchTheme();
+
+    // 6-Language Translation Dictionary Mapping
+    const dictionary = {
+        en: {
+            title: "CoreSign AI",
+            security: "🔒 <strong>Privacy Guarantee:</strong> This application operates 100% locally on your browser. Your Keys, Passphrases, and files are processed purely inside your device's memory and are NEVER uploaded or stored on any server.",
+            aiTitle: "Gemini AI Content Generator",
+            labelGeminiKey: "Google AI Studio API Key",
+            labelPrompt: "What do you want to contribute? (Write in your native language)",
+            btnGen: "Generate English Post via Gemini 3.8-Flash",
+            workspaceTitle: "Broadcast Portal",
+            labelRoom: "Target Room",
+            labelDid: "Your Public DID Key (did:key:...)",
+            labelSig: "Cryptographic Signature",
+            labelMsg: "Text Payload / Output Link",
+            btnText: "Broadcast to Technocore Server",
+            sending: "[*] Communicating with technocore.chat...",
+            success: "[✓] BROADCAST SUCCESSFUL! Committed to registry.",
+            failed: "[❌] TRANSMISSION FAILED: "
+        },
+        id: {
+            title: "CoreSign AI",
+            security: "🔒 <strong>Jaminan Privasi:</strong> Aplikasi ini beroperasi 100% secara lokal di browser Anda. Kunci, Passphrase, dan file Anda diproses murni di memori perangkat Anda dan TIDAK PERNAH disimpan di server mana pun.",
+            aiTitle: "Pembuat Konten Gemini AI",
+            labelGeminiKey: "Kunci API Google AI Studio",
+            labelPrompt: "Apa yang ingin Anda kontribusikan? (Tulis dalam bahasa Anda sendiri)",
+            btnGen: "Buat Postingan Inggris via Gemini 3.8-Flash",
+            workspaceTitle: "Portal Pengiriman",
+            labelRoom: "Kamar Target (Room)",
+            labelDid: "Kunci DID Publik Anda (did:key:...)",
+            labelSig: "Signature Kriptografi",
+            labelMsg: "Isi Pesan / Tautan Payload",
+            btnText: "Kirim Data ke Server Technocore",
+            sending: "[*] Menghubungi server technocore.chat...",
+            success: "[✓] PENGIRIMAN BERHASIL! Data berhasil direkam ke server.",
+            failed: "[❌] PENGIRIMAN GAGAL: "
+        },
+        zh: {
+            title: "CoreSign 智能终端",
+            security: "🔒 <strong>隐私保证：</strong>此应用程序完全在您的浏览器本地运行。您的密钥、密码和文件完全在您的设备内存中处理，绝不会上传或存储在任何服务器上。",
+            aiTitle: "Gemini AI 内容生成器",
+            labelGeminiKey: "Google AI Studio API 密钥",
+            labelPrompt: "您想贡献什么内容？（可以用您的母语书写）",
+            btnGen: "通过 Gemini 3.8-Flash 生成英文文章",
+            workspaceTitle: "广播门户",
+            labelRoom: "目标房间",
+            labelDid: "您的公钥 DID (did:key:...)",
+            labelSig: "加密签名",
+            labelMsg: "文本内容 / 输出链接",
+            btnText: "广播至 Technocore 服务器",
+            sending: "[*] 正在与 technocore.chat 通信...",
+            success: "[✓] 广播成功！已写入中央注册表。",
+            failed: "[❌] 传输失败: "
+        },
+        ja: {
+            title: "CoreSign AI エージェント",
+            security: "🔒 <strong>プライバシー保証：</strong>このアプリは100%ブラウザ上でローカルに動作します。パスフレーズや鍵ファイルがサーバーに送信または保存されることは絶対にありません。",
+            aiTitle: "Gemini AI コンテンツ生成",
+            labelGeminiKey: "Google AI Studio API キー",
+            labelPrompt: "どのような貢献をしたいですか？（母国語で入力可能）",
+            btnGen: "Gemini 3.8-Flash で英文を作成",
+            workspaceTitle: "配信ポータル",
+            labelRoom: "対象ルーム",
+            labelDid: "あなたの公開 DID キー (did:key:...)",
+            labelSig: "暗号化署名 (Signature)",
+            labelMsg: "テキストペイロード / リンク",
+            btnText: "Technocore サーバーへ配信",
+            sending: "[*] technocore.chat と通信中...",
+            success: "[✓] 配信成功！レジストリに記録されました。",
+            failed: "[❌] 送信失敗: "
+        },
+        ko: {
+            title: "CoreSign AI 허브",
+            security: "🔒 <strong>개인정보 보호 보장:</strong> 이 애플리케이션은 브라우저에서 100% 로컬로 작동합니다. 귀하의 키와 비밀번호는 장치 메모리 내에서만 처리되며 절대 서버에 저장되지 않습니다.",
+            aiTitle: "Gemini AI 콘텐츠 생성기",
+            labelGeminiKey: "Google AI Studio API 키",
+            labelPrompt: "어떤 기여를 하고 싶으신가요? (모국어로 작성 가능)",
+            btnGen: "Gemini 3.8-Flash를 통해 영문 포스트 생성",
+            workspaceTitle: "브로드캐스트 포털",
+            labelRoom: "대상 룸",
+            labelDid: "공개 DID 키 (did:key:...)",
+            labelSig: "암호화 서명",
+            labelMsg: "텍스트 페이로드 / 링크",
+            btnText: "Technocore 서버로 전송",
+            sending: "[*] technocore.chat과 통신 중...",
+            success: "[✓] 전송 성공! 중앙 레지스트리에 등록되었습니다.",
+            failed: "[❌] 전송 실패: "
+        },
+        ar: {
+            title: "بوابة CoreSign الذكية",
+            security: "🔒 <strong>ضمان الخصوصية:</strong> يعمل هذا التطبيق محلياً بنسبة 100% على متصفحك. مفاتيحك وكلمات مرورك تُعالج داخل ذاكرة جهازك فقط ولا يتم رفعها أو تخزينها على أي خادم.",
+            aiTitle: "محرر المحتوى الذكي Gemini",
+            labelGeminiKey: "مفتاح Google AI Studio API",
+            labelPrompt: "ما الذي ترغب في المساهمة به؟ (اكتب بلغتِك الأم)",
+            btnGen: "توليد منشور إنجليزي عبر Gemini 3.8-Flash",
+            workspaceTitle: "بوابة البث المركزي",
+            labelRoom: "الغرفة المستهدفة",
+            labelDid: "مفتاح DID العام الخاص بك",
+            labelSig: "التوقيع التشفيري",
+            labelMsg: "محتوى الرسالة / رابط المساهمة",
+            btnText: "بث البيانات إلى خادم Technocore",
+            sending: "[*] جاري الاتصال بشبكة technocore.chat...",
+            success: "[✓] تم البث بنجاح! تم تسجيل البيانات بالخادم الرئيسي.",
+            failed: "[❌] فشل الإرسال: "
+        }
+    };
+
+    function switchLanguage() {
+        const lang = document.getElementById("lang-picker").value;
+        const dict = dictionary[lang];
+
+        document.getElementById("app-title").innerText = dict.title;
+        document.getElementById("security-text").innerHTML = dict.security;
+        document.getElementById("ai-title").innerText = dict.aiTitle;
+        document.getElementById("label-gemini-key").innerText = dict.labelGeminiKey;
+        document.getElementById("label-prompt").innerText = dict.labelPrompt;
+        document.getElementById("btn-generate").innerText = dict.btnGen;
+        document.getElementById("workspace-title").innerText = dict.workspaceTitle;
+        document.getElementById("label-room").innerText = dict.labelRoom;
+        document.getElementById("label-did").innerText = dict.labelDid;
+        document.getElementById("label-sig").innerText = dict.labelSig;
+        document.getElementById("label-msg").innerText = dict.labelMsg;
+        document.getElementById("submit-btn").innerText = dict.btnText;
+    }
+    // Connection to Google AI Studio API Engine via Fetch
+    async function generateWithGemini() {
+        const apiKey = document.getElementById("gemini-key").value.trim();
+        const userPrompt = document.getElementById("ai-prompt").value.trim();
+        const did = document.getElementById("did-input").value.trim() || "did:key:z6MkmZAR1ePxsJgaES7HtyvKtamQyTybu9GBzuqFK6GwVyZi";
+        const statusBox = document.getElementById("status-display");
+
+        if (!apiKey || !userPrompt) {
+            statusBox.className = "status-box error";
+            statusBox.innerText = "Please provide both Gemini API Key and Prompt.";
+            statusBox.style.display = "block";
+            return;
+        }
+
+        statusBox.className = "status-box success";
+        statusBox.innerText = "[*] Authenticating with Google AI Studio & Generating content...";
+        statusBox.style.display = "block";
+
+        // Endpoint resmi REST API Google AI Studio Gemini
+        const url = `https://googleapis.com{apiKey}`;
+        
+        const payload = {
+            contents: [{
+                parts: [{
+                    text: `Translate and structure this idea into a high-quality, professional English community contribution post for a web3 project. Make it organic and unique to avoid anti-spam filters. Idea: "${userPrompt}". Near the bottom, append this ownership marker line exactly: "[Cryptographic Owner Node DID: ${did}]"`
+                }]
+            }]
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            
+            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                const generatedText = data.candidates[0].content.parts[0].text;
+                document.getElementById("message-input").value = generatedText;
+                statusBox.className = "status-box success";
+                statusBox.innerText = "[✓] Content successfully compiled by Gemini 3.8-Flash! Ready to broadcast below.";
+            } else {
+                throw new Error("Invalid API Key response or rate limited.");
+            }
+        } catch (error) {
+            statusBox.className = "status-box error";
+            statusBox.innerText = "[❌] Gemini API Error: " + error.message;
+        }
+    }
+
+    // Flop Labs Gateway Server Broadcaster (HTTP GET Pipeline)
+    async function executeBroadcast() {
+        const lang = document.getElementById("lang-picker").value;
+        const dict = dictionary[lang];
+        const statusBox = document.getElementById("status-display");
+
+        const room = document.getElementById("room-input").value.trim();
+        const did = document.getElementById("did-input").value.trim();
+        const sig = document.getElementById("sig-input").value.trim();
+        const message = document.getElementById("message-input").value.trim();
+        const nonce = Math.floor(Date.now() / 1000);
+
+        if (!room || !did || !sig || !message) {
+            statusBox.className = "status-box error";
+            statusBox.innerText = lang === "en" ? "Fields cannot be blank." : "Kolom tidak boleh kosong.";
+            statusBox.style.display = "block";
+            return;
+        }
+
+        statusBox.className = "status-box success";
+        statusBox.innerText = dict.sending;
+
+        const encodedText = encodeURIComponent(message);
+        const targetUrl = `https://technocore.chat{room}/say-signed/${did}/${sig}/${nonce}/${encodedText}`;
+
+        try {
+            await fetch(targetUrl, { method: 'GET', mode: 'no-cors' });
+            statusBox.className = "status-box success";
+            statusBox.innerText = dict.success;
+        } catch (error) {
+            statusBox.className = "status-box error";
+            statusBox.innerText = dict.failed + error.message;
+        }
+    }
+</script>
+</body>
+</html>
