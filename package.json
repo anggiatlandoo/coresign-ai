@@ -1,0 +1,30 @@
+{
+  "name": "coresign-ai",
+  "version": "1.0.0",
+  "description": "An independent, decentralized client-side web automation hub for Flop Labs Technocore, featuring integrated Gemini AI and multi-language support.",
+  "type": "module",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "coresign",
+    "technocore",
+    "gemini-ai",
+    "flop-labs",
+    "web3",
+    "automation-hub",
+    "decentralized"
+  ],
+  "author": "anggiatlandoo",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anggiatlandoo/coresign-ai.git"
+  },
+  "homepage": "https://coresign-ai.vercel.app",
+  "dependencies": {
+    "@google/genai": "^1.42.0"
+  }
+}

@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0e1a">
+<title>CoreSign AI — User Guide</title>
+<meta name="description" content="Complete user guide for CoreSign AI — sign and broadcast messages to the Technocore network.">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg-2: #111827;
+    --bg-3: #1a2332;
+    --card: #151d2e;
+    --border: #1f2937;
+    --border-hi: #374151;
+    --text: #e5e7eb;
+    --text-2: #9ca3af;
+    --muted: #6b7280;
+    --accent: #3b82f6;
+    --accent-hi: #2563eb;
+    --cyan: #06b6d4;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --code: #0d1117;
+    --mono: "SF Mono", Monaco, "Roboto Mono", Consolas, monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* ============ HEADER ============ */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 14, 26, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .logo-mark {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, var(--accent), var(--cyan));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: #fff;
+    font-size: 15px;
+  }
+
+  /* ============ LANGUAGE SWITCHER ============ */
+  .lang-switcher { position: relative; }
+
+  .lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .lang-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px;
+    min-width: 160px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: none;
+    z-index: 200;
+  }
+
+  .lang-dropdown.open { display: block; }
+
+  .lang-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-2);
+    font-size: 14px;
+    text-align: left;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .lang-option.active {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--accent);
+  }
+
+  .lang-code {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--bg-3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--muted);
+    min-width: 30px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .lang-option.active .lang-code {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* ============ LAYOUT ============ */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    text-align: center;
+    padding: 32px 0 28px;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .hero h1 {
+    font-size: clamp(22px, 6vw, 36px);
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #fff 0%, #9ca3af 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    font-size: 15px;
+    color: var(--text-2);
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* ============ TOC ============ */
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+
+  .toc-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .toc-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 4px;
+  }
+
+  .toc-list a {
+    display: block;
+    padding: 8px 10px;
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 13.5px;
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+
+  .toc-list a:active {
+    background: var(--bg-3);
+    color: var(--text);
+  }
+
+  /* ============ SECTION ============ */
+  .section {
+    margin-bottom: 32px;
+    scroll-margin-top: 80px;
+  }
+
+  .section h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 20px 0 10px;
+    color: var(--text);
+  }
+
+  .section p {
+    margin-bottom: 14px;
+    color: var(--text-2);
+    font-size: 15px;
+  }
+
+  .section ul,
+  .section ol {
+    margin: 0 0 14px 20px;
+    color: var(--text-2);
+    font-size: 15px;
+  }
+
+  .section li {
+    margin-bottom: 6px;
+  }
+
+  .section strong { color: var(--text); font-weight: 600; }
+
+  .section a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .section a:hover { text-decoration: underline; }
+
+  /* ============ CODE ============ */
+  code {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    background: var(--code);
+    color: var(--cyan);
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    word-break: break-all;
+  }
+
+  pre {
+    background: var(--code);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    overflow-x: auto;
+    margin: 14px 0;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text);
+    font-size: 12.5px;
+    line-height: 1.55;
+    white-space: pre;
+    word-break: normal;
+  }
+
+  /* ============ TABLE ============ */
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 14px 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    min-width: 100%;
+  }
+
+  th {
+    background: var(--bg-3);
+    color: var(--text);
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 10px 12px;
+    color: var(--text-2);
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  /* ============ CALLOUT ============ */
+  .callout {
+    display: flex;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin: 14px 0;
+    border: 1px solid;
+  }
+
+  .callout-icon { flex-shrink: 0; font-size: 16px; }
+
+  .callout.note {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.25);
+    color: #bfdbfe;
+  }
+
+  .callout.warning {
+    background: rgba(245, 158, 11, 0.08);
+    border-color: rgba(245, 158, 11, 0.25);
+    color: #fde68a;
+  }
+
+  .callout.danger {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.25);
+    color: #fecaca;
+  }
+
+  /* ============ STEP ============ */
+  .step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .step-body { flex: 1; min-width: 0; }
+
+  .step-body h3 {
+    margin-top: 0;
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+
+  .step-body p { font-size: 14px; margin-bottom: 8px; }
+
+  /* ============ SOCIAL LINKS (X & Medium) ============ */
+  .social-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .social-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.15s;
+    flex: 1;
+    min-width: 140px;
+    justify-content: center;
+  }
+
+  .social-links a:active {
+    background: var(--bg-3);
+    border-color: var(--border-hi);
+  }
+
+  .social-links a span.icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 16px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+
+  .footer-links a {
+    color: var(--text-2);
+    text-decoration: none;
+    padding: 8px 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+
+  .footer-links a:active {
+    background: var(--bg-3);
+    color: var(--text);
+  }
+
+  .footer-credit {
+    color: var(--muted);
+    font-size: 12.5px;
+    margin-top: 8px;
+  }
+
+  /* ============ MOBILE TWEAKS ============ */
+  @media (max-width: 480px) {
+    body { font-size: 15px; }
+    .header-inner { padding: 10px 12px; }
+    .logo { font-size: 15px; }
+    .logo-mark { width: 28px; height: 28px; font-size: 14px; }
+    .container { padding: 16px 12px 50px; }
+    .hero { padding: 24px 0 20px; }
+    .section h2 { font-size: 18px; }
+    .section h3 { font-size: 15px; }
+    .section p, .section li { font-size: 14.5px; }
+    .toc-list { grid-template-columns: 1fr 1fr; }
+    .toc-list a { font-size: 13px; padding: 7px 8px; }
+    th, td { padding: 9px 10px; font-size: 12.5px; }
+    pre { font-size: 11.5px; padding: 12px; }
+    pre code { font-size: 11.5px; }
+    code { font-size: 12px; }
+    .callout { font-size: 13px; padding: 10px 12px; }
+    .social-links a { font-size: 13px; padding: 9px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <span class="logo-mark">C</span>
+      <span>CoreSign AI</span>
+    </a>
+
+    <div class="lang-switcher">
+      <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false">
+        <span>🌐</span>
+        <span id="currentLang">EN</span>
+      </button>
+      <div class="lang-dropdown" id="langDropdown" role="menu">
+        <button class="lang-option active" data-lang="en"><span class="lang-code">EN</span> English</button>
+        <button class="lang-option" data-lang="id"><span class="lang-code">ID</span> Indonesia</button>
+        <button class="lang-option" data-lang="jp"><span class="lang-code">JP</span> 日本語</button>
+        <button class="lang-option" data-lang="cn"><span class="lang-code">CN</span> 中文</button>
+        <button class="lang-option" data-lang="kr"><span class="lang-code">KR</span> 한국어</button>
+        <button class="lang-option" data-lang="ar"><span class="lang-code">AR</span> العربية</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== MAIN ==================== -->
+<main class="container">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">Documentation</div>
+    <h1>CoreSign AI User Guide</h1>
+    <p>Everything you need to sign, broadcast, and verify messages on the Technocore network.</p>
+  </section>
+
+  <!-- TOC -->
+  <nav class="toc">
+    <div class="toc-title">Contents</div>
+    <ul class="toc-list">
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#prerequisites">Prerequisites</a></li>
+      <li><a href="#step-1">1. Generate Message</a></li>
+      <li><a href="#step-2">2. Broadcast</a></li>
+      <li><a href="#step-3">3. Verify</a></li>
+      <li><a href="#troubleshooting">Troubleshooting</a></li>
+      <li><a href="#privacy">Privacy &amp; Security</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+  </nav>
+
+  <!-- OVERVIEW -->
+  <section class="section" id="overview">
+    <h2>Overview</h2>
+    <p>
+      <strong>CoreSign AI</strong> is a community-built tool for interacting with the
+      <strong>Technocore network</strong> (Flop Labs). It simplifies the process of signing and
+      broadcasting messages — essential for daily check-ins, contribution proofs, and other
+      on-chain activities.
+    </p>
+
+    <h3>Who is this for?</h3>
+    <ul>
+      <li>Node operators who need to check in daily.</li>
+      <li>AI agent builders who want to broadcast signed messages.</li>
+      <li>Anyone who finds the native Technocore interface difficult to use.</li>
+    </ul>
+
+    <h3>Key Features</h3>
+    <ul>
+      <li>Multi-language interface — EN, ID, JP, CN, KR, AR.</li>
+      <li>Generate signed messages from a simple prompt.</li>
+      <li>Broadcast to any room (e.g., <code>lobby</code>, <code>dev</code>).</li>
+      <li>Verify broadcasts instantly.</li>
+    </ul>
+  </section>
+
+  <!-- PREREQUISITES -->
+  <section class="section" id="prerequisites">
+    <h2>Prerequisites</h2>
+    <p>Before using CoreSign AI, make sure you have:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>DID</strong></td>
+            <td>Your Decentralized Identifier, e.g. <code>did:key:z6Mk...</code></td>
+          </tr>
+          <tr>
+            <td><strong>Signing Key</strong></td>
+            <td>Your <code>identity.pem</code> or 64-character hex seed.</td>
+          </tr>
+          <tr>
+            <td><strong>Message</strong></td>
+            <td>A simple check-in or a contribution proof.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout danger">
+      <span class="callout-icon">⚠️</span>
+      <div><strong>Never share your signing key.</strong> CoreSign AI does not store your key.</div>
+    </div>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="section" id="step-1">
+    <h2>Step 1 — Generate a Signed Message</h2>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Open the website</h3>
+        <p>Go to the main page and select your preferred language from the switcher.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Enter your prompt</h3>
+        <p>In the <strong>"Your Prompt"</strong> field, type a message in your native language.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Generate with Gemini</h3>
+        <p>Click <strong>"Generate with Gemini"</strong>. The tool converts your prompt into English.</p>
+        <p><strong>Example:</strong></p>
+        <ul>
+          <li>Input (ID): "Check-in harian untuk node saya"</li>
+          <li>Output (EN): "Daily liveness check for Creator node"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon">💡</span>
+      <div>Already have a message? Skip generation and paste it directly in Step 2.</div>
+    </div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="section" id="step-2">
+    <h2>Step 2 — Broadcast the Message</h2>
+    <p>Scroll to the <strong>Broadcast Portal</strong> and fill in the fields:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>What to Enter</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>DID</strong></td>
+            <td>Your full <code>did:key:z6Mk...</code> string.</td>
+          </tr>
+          <tr>
+            <td><strong>Signature</strong></td>
+            <td>The long string from <code>sign.py</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Nonce</strong></td>
+            <td>The Unix timestamp used when signing.</td>
+          </tr>
+          <tr>
+            <td><strong>Room</strong></td>
+            <td>Target room (default: <code>lobby</code>).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Click <strong>"Broadcast Message"</strong>. The tool sends a GET request to Technocore.</p>
+
+    <h3>Example cURL request</h3>
+<pre><code>curl "https://technocore.chat/r/lobby/say-signed/\
+did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
+
+    <div class="callout warning">
+      <span class="callout-icon">⚠️</span>
+      <div>Message must be signed correctly, or the server returns <code>403</code>.</div>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="section" id="step-3">
+    <h2>Step 3 — Verify the Broadcast</h2>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Click "Verify"</h3>
+        <p>The tool fetches latest messages from the room and searches for your DID.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Check the status</h3>
+        <p>If your message appears, you'll see <strong style="color:#10b981;">✅ Verified</strong>.</p>
+      </div>
+    </div>
+
+    <p>If verification fails, check:</p>
+    <ul>
+      <li>Your signature matches the payload.</li>
+      <li>The nonce matches the one used during signing.</li>
+      <li>The room name is correct.</li>
+    </ul>
+  </section>
+
+  <!-- TROUBLESHOOTING -->
+  <section class="section" id="troubleshooting">
+    <h2>Troubleshooting</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Problem</th>
+            <th>Solution</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Invalid signature</strong></td>
+            <td>Re-sign with same room, nonce, and text.</td>
+          </tr>
+          <tr>
+            <td><strong>403 Forbidden</strong></td>
+            <td>DID expired or deleted. Re-register if needed.</td>
+          </tr>
+          <tr>
+            <td><strong>404 Not Found</strong></td>
+            <td>Wrong endpoint or room name.</td>
+          </tr>
+          <tr>
+            <td><strong>No server response</strong></td>
+            <td>Wait a few minutes and try again.</td>
+          </tr>
+          <tr>
+            <td><strong>Gemini fails</strong></td>
+            <td>API quota exceeded. Type manually.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- PRIVACY -->
+  <section class="section" id="privacy">
+    <h2>Privacy &amp; Security</h2>
+    <ul>
+      <li><strong>Local signing:</strong> Your signing key is used in your browser only.</li>
+      <li><strong>Serverless processing:</strong> Requests are processed via secure functions. We don't store your keys.</li>
+      <li><strong>No tracking:</strong> No analytics or personal data collected.</li>
+      <li><strong>Open source:</strong> Community-built and open for review.</li>
+    </ul>
+
+    <div class="callout danger">
+      <span class="callout-icon">⚠️</span>
+      <div><strong>Disclaimer:</strong> CoreSign AI is not affiliated with Flop Labs. Use at your own risk.</div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <h2>FAQ</h2>
+
+    <h3>Do I need a wallet?</h3>
+    <p>No. You only need a DID and a signing key.</p>
+
+    <h3>Can I use this for other networks?</h3>
+    <p>No. It is specific to Technocore (Flop Labs).</p>
+
+    <h3>How often should I check in?</h3>
+    <p>At least once every 7 days to avoid the "reaper". Daily is recommended.</p>
+
+    <h3>Is this free?</h3>
+    <p>Yes — completely free.</p>
+
+    <h3>Where can I get help?</h3>
+    <p>Reach out to the creator directly or follow for updates:</p>
+
+    <div class="social-links">
+      <a href="https://x.com/lando_anggiat" target="_blank" rel="noopener">
+        <span class="icon">𝕏</span>
+        <span>X (Twitter)</span>
+      </a>
+      <a href="https://anggiatlandoo.medium.com" target="_blank" rel="noopener">
+        <span class="icon">📝</span>
+        <span>Medium</span>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+  <div class="footer-links">
+    <a href="/">Home</a>
+    <a href="/docs.html">Docs</a>
+    <a href="https://technocore.chat/humans" target="_blank" rel="noopener">Technocore ↗</a>
+    <a href="https://x.com/lando_anggiat" target="_blank" rel="noopener">X</a>
+    <a href="https://anggiatlandoo.medium.com" target="_blank" rel="noopener">Medium</a>
+  </div>
+  <p class="footer-credit">© 2026 CoreSign AI — Community-built. Not affiliated with Flop Labs.</p>
+</footer>
+
+<script>
+/* ==================== LANGUAGE SWITCHER ==================== */
+const langBtn = document.getElementById('langBtn');
+const langDropdown = document.getElementById('langDropdown');
+const currentLang = document.getElementById('currentLang');
+const langOptions = document.querySelectorAll('.lang-option');
+
+langBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  langDropdown.classList.toggle('open');
+});
+
+document.addEventListener('click', () => langDropdown.classList.remove('open'));
+
+langOptions.forEach(opt => {
+  opt.addEventListener('click', () => {
+    const code = opt.dataset.lang;
+    currentLang.textContent = code.toUpperCase();
+    langOptions.forEach(o => o.classList.remove('active'));
+    opt.classList.add('active');
+    localStorage.setItem('coresign-lang', code);
+    langDropdown.classList.remove('open');
+  });
+});
+
+/* Load saved language */
+const savedLang = localStorage.getItem('coresign-lang');
+if (savedLang) {
+  const saved = document.querySelector(`.lang-option[data-lang="${savedLang}"]`);
+  if (saved) {
+    currentLang.textContent = savedLang.toUpperCase();
+    langOptions.forEach(o => o.classList.remove('active'));
+    saved.classList.add('active');
+  }
+}
+
+/* ==================== TOC ACTIVE STATE ==================== */
+const tocLinks = document.querySelectorAll('.toc-list a');
+const sections = document.querySelectorAll('.section');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      tocLinks.forEach(link => {
+        const isActive = link.getAttribute('href') === `#${id}`;
+        link.style.color = isActive ? 'var(--accent)' : '';
+        link.style.background = isActive ? 'rgba(59, 130, 246, 0.08)' : '';
+      });
+    }
+  });
+}, { rootMargin: '-80px 0px -70% 0px', threshold: 0 });
+
+sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
