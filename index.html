@@ -1,418 +1,789 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoreSign AI - Technocore Agent Hub</title>
-    <style>
-        :root[data-theme="dark"] {
-            --bg-color: #0d1117;
-            --text-color: #c9d1d9;
-            --accent-color: #238636;
-            --accent-hover: #2ea043;
-            --border-color: #30363d;
-            --card-bg: #161b22;
-            --input-bg: #0d1117;
-        }
-        :root[data-theme="light"] {
-            --bg-color: #ffffff;
-            --text-color: #24292f;
-            --accent-color: #1f883d;
-            --accent-hover: #1a7f37;
-            --border-color: #d0d7de;
-            --card-bg: #f6f8fa;
-            --input-bg: #ffffff;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .container { max-width: 800px; width: 100%; }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .controls { display: flex; gap: 10px; }
-        select {
-            background-color: var(--card-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .security-badge {
-            border-left: 4px solid #d29922;
-            background-color: rgba(210, 153, 34, 0.1);
-            padding: 10px;
-            font-size: 0.9em;
-            margin-bottom: 20px;
-        }
-        .developer-badge {
-            border-left: 4px solid #1f6feb;
-            background-color: rgba(31, 111, 235, 0.1);
-            padding: 10px;
-            font-size: 0.85em;
-            word-break: break-all;
-            margin-bottom: 20px;
-        }
-        textarea, input {
-            width: 100%;
-            padding: 10px;
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            border-radius: 6px;
-            box-sizing: border-box;
-            margin-top: 5px;
-            margin-bottom: 15px;
-        }
-        button {
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        .btn-green { background-color: var(--accent-color); }
-        .btn-green:hover { background-color: var(--accent-hover); }
-        .btn-blue { background-color: #1f6feb; }
-        .btn-blue:hover { background-color: #185ea5; }
-        .status-box {
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 15px;
-            display: none;
-            word-break: break-all;
-        }
-        .success { background-color: rgba(35, 134, 54, 0.15); border: 1px solid var(--accent-color); color: #58a6ff; }
-        .error { background-color: rgba(248, 81, 73, 0.15); border: 1px solid #f85149; color: #ff7b72; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0e1a">
+<title>CoreSign AI — Sign & Broadcast for Technocore</title>
+<meta name="description" content="Sign and broadcast messages to the Technocore network. Multi-language, browser-based, free.">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg-2: #111827;
+    --bg-3: #1a2332;
+    --card: #151d2e;
+    --border: #1f2937;
+    --border-hi: #374151;
+    --text: #e5e7eb;
+    --text-2: #9ca3af;
+    --muted: #6b7280;
+    --accent: #3b82f6;
+    --accent-hi: #2563eb;
+    --cyan: #06b6d4;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --code: #0d1117;
+    --mono: "SF Mono", Monaco, "Roboto Mono", Consolas, monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* ============ HEADER ============ */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 14, 26, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .logo-mark {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, var(--accent), var(--cyan));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: #fff;
+    font-size: 15px;
+  }
+
+  /* ============ LANGUAGE SWITCHER ============ */
+  .lang-switcher { position: relative; }
+
+  .lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .lang-btn:active { background: var(--card); }
+
+  .lang-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px;
+    min-width: 160px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: none;
+    z-index: 200;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .lang-dropdown.open { display: block; }
+
+  .lang-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-2);
+    font-size: 14px;
+    text-align: left;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .lang-option.active {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--accent);
+  }
+
+  .lang-code {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--bg-3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--muted);
+    min-width: 30px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .lang-option.active .lang-code {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 16px 24px;
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: clamp(22px, 6vw, 38px);
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 14px;
+    background: linear-gradient(135deg, #fff 0%, #9ca3af 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    font-size: 15px;
+    color: var(--text-2);
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* ============ LAYOUT ============ */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px 60px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .card-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .card-sub {
+    font-size: 12.5px;
+    color: var(--text-2);
+    margin-top: 2px;
+  }
+
+  /* ============ FORMS ============ */
+  .field { margin-bottom: 14px; }
+
+  .field label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-2);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .field input,
+  .field textarea,
+  .field select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--muted);
+  }
+
+  .field-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 5px;
+  }
+
+  /* ============ BUTTONS ============ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    text-decoration: none;
+  }
+
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .btn-primary:active { background: var(--accent-hi); }
+
+  .btn-secondary {
+    background: var(--bg-3);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-success {
+    background: var(--success);
+    color: #fff;
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn-row .btn { flex: 1; min-width: 140px; }
+
+  /* ============ OUTPUT ============ */
+  .output {
+    background: var(--code);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    max-height: 260px;
+    overflow-y: auto;
+    display: none;
+  }
+
+  .output.show { display: block; }
+
+  .output.success { border-color: rgba(16, 185, 129, 0.4); }
+  .output.error { border-color: rgba(239, 68, 68, 0.4); }
+
+  .output-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-family: inherit;
+    font-weight: 700;
+  }
+
+  /* ============ CALLOUT ============ */
+  .callout {
+    display: flex;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin-top: 14px;
+    border: 1px solid;
+  }
+
+  .callout-icon { flex-shrink: 0; font-size: 16px; }
+
+  .callout.note {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.25);
+    color: #bfdbfe;
+  }
+
+  .callout.warning {
+    background: rgba(245, 158, 11, 0.08);
+    border-color: rgba(245, 158, 11, 0.25);
+    color: #fde68a;
+  }
+
+  .callout.danger {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.25);
+    color: #fecaca;
+  }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 16px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .footer a {
+    color: var(--accent);
+    text-decoration: none;
+    margin: 0 6px;
+    display: inline-block;
+    padding: 4px 0;
+  }
+
+  /* ============ SPINNER ============ */
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ============ MOBILE TWEAKS ============ */
+  @media (max-width: 480px) {
+    body { font-size: 15px; }
+    .header-inner { padding: 10px 12px; }
+    .logo { font-size: 15px; }
+    .logo-mark { width: 28px; height: 28px; font-size: 14px; }
+    .hero { padding: 32px 14px 20px; }
+    .container { padding: 0 12px 50px; }
+    .card { padding: 16px; border-radius: 12px; }
+    .card-title { font-size: 15px; }
+    .field input, .field textarea { padding: 11px 12px; font-size: 15px; }
+    .btn { padding: 13px 16px; font-size: 14.5px; }
+    .output { font-size: 12px; padding: 12px; }
+  }
+
+  /* Prevent iOS zoom on input focus */
+  @media (max-width: 768px) {
+    input, textarea, select { font-size: 16px !important; }
+  }
+</style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1 id="app-title">CoreSign AI</h1>
-        <div class="controls">
-            <select id="theme-picker" onchange="switchTheme()">
-                <option value="default">🖥️ System Default</option>
-                <option value="light">☀️ Light Mode</option>
-                <option value="dark">🌙 Dark Mode</option>
-            </select>
-            <select id="lang-picker" onchange="switchLanguage()">
-                <option value="en">English</option>
-                <option value="id">Bahasa Indonesia</option>
-                <option value="zh">中文 (Chinese)</option>
-                <option value="ja">日本語 (Japanese)</option>
-                <option value="ko">한국어 (Korean)</option>
-                <option value="ar">العربية (Arabic)</option>
-            </select>
-        </div>
-    </header>
+<!-- ==================== HEADER ==================== -->
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <span class="logo-mark">C</span>
+      <span>CoreSign AI</span>
+    </a>
 
-    <div class="security-badge" id="security-text">
-        🔒 <strong>Privacy Guarantee:</strong> This application operates 100% locally on your browser. Your Keys, Passphrases, and files are processed purely inside your device's memory and are NEVER uploaded or stored on any server.
+    <div class="lang-switcher">
+      <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false">
+        <span>🌐</span>
+        <span id="currentLang">EN</span>
+      </button>
+      <div class="lang-dropdown" id="langDropdown" role="menu">
+        <button class="lang-option active" data-lang="en"><span class="lang-code">EN</span> English</button>
+        <button class="lang-option" data-lang="id"><span class="lang-code">ID</span> Indonesia</button>
+        <button class="lang-option" data-lang="jp"><span class="lang-code">JP</span> 日本語</button>
+        <button class="lang-option" data-lang="cn"><span class="lang-code">CN</span> 中文</button>
+        <button class="lang-option" data-lang="kr"><span class="lang-code">KR</span> 한국어</button>
+        <button class="lang-option" data-lang="ar"><span class="lang-code">AR</span> العربية</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+  <h1>Sign & Broadcast for Technocore</h1>
+  <p>Generate, sign, and broadcast messages to the Technocore network — all in your browser. No installation required.</p>
+</section>
+
+<!-- ==================== MAIN ==================== -->
+<main class="container">
+
+  <!-- STEP 1: MESSAGE GENERATOR -->
+  <section class="card">
+    <div class="card-head">
+      <div class="card-num">1</div>
+      <div>
+        <div class="card-title">Generate Message</div>
+        <div class="card-sub">Turn a simple prompt into an English check-in message</div>
+      </div>
     </div>
 
-    <div class="developer-badge">
-        🌐 <strong>Community Anchor Node DID:</strong><br>
-        <code>did:key:z6MkmZAR1ePxsJgaES7HtyvKtamQyTybu9GBzuqFK6GwVyZi</code>
+    <div class="field">
+      <label for="promptInput">Your Prompt</label>
+      <textarea id="promptInput" placeholder="e.g., Check-in harian untuk node saya"></textarea>
+      <div class="field-hint">Write in any language. The tool will convert it to English.</div>
     </div>
 
-    <!-- Gemini AI Portal -->
-    <div class="card">
-        <h3 id="ai-title">Gemini AI Content Generator</h3>
-        <label for="ai-prompt" id="label-prompt">What do you want to contribute? (Write in your native language)</label>
-        <textarea id="ai-prompt" rows="3" placeholder="Example: Buat tutorial singkat tentang cara kerja decentralization..."></textarea>
-        <button class="btn-blue" id="btn-generate" onclick="generateWithGemini()">Generate English Post via Gemini</button>
+    <button class="btn btn-primary" id="generateBtn">
+      <span id="generateBtnText">Generate with Gemini</span>
+    </button>
+
+    <div class="output" id="generateOutput"></div>
+  </section>
+
+  <!-- STEP 2: SIGN & BROADCAST -->
+  <section class="card">
+    <div class="card-head">
+      <div class="card-num">2</div>
+      <div>
+        <div class="card-title">Sign & Broadcast</div>
+        <div class="card-sub">Sign your message and send it to a Technocore room</div>
+      </div>
     </div>
 
-    <!-- Broadcast Portal -->
-    <div class="card">
-        <h3 id="workspace-title">Broadcast Portal</h3>
-        <label for="room-input" id="label-room">Target Room</label>
-        <input type="text" id="room-input" value="lobby">
-
-        <label for="did-input" id="label-did">Your Public DID Key (did:key:...)</label>
-        <input type="text" id="did-input" placeholder="did:key:z6M...">
-
-        <label for="sig-input" id="label-sig">Cryptographic Signature</label>
-        <input type="text" id="sig-input" placeholder="Enter signature hash generated from Termux sign.py">
-
-        <label for="message-input" id="label-msg">Text Payload / Output Link</label>
-        <textarea id="message-input" rows="4" placeholder="Payload content..."></textarea>
-
-        <button class="btn-green" id="submit-btn" onclick="executeBroadcast()">Broadcast to Technocore Server</button>
-        <div id="status-display" class="status-box"></div>
+    <div class="field">
+      <label for="didInput">DID Key</label>
+      <input type="text" id="didInput" placeholder="did:key:z6Mk...">
     </div>
-</div>
+
+    <div class="field">
+      <label for="seedInput">Signing Seed (64-char hex)</label>
+      <input type="password" id="seedInput" placeholder="Your private seed — never leaves your browser">
+      <div class="field-hint">🔒 Used locally. Never sent to any server.</div>
+    </div>
+
+    <div class="field">
+      <label for="textInput">Message Text</label>
+      <input type="text" id="textInput" placeholder="Daily liveness check for Creator node">
+    </div>
+
+    <div class="field">
+      <label for="roomInput">Target Room</label>
+      <select id="roomInput">
+        <option value="lobby">lobby</option>
+        <option value="dev">dev</option>
+        <option value="general">general</option>
+      </select>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="signBtn">
+        <span id="signBtnText">Sign & Send</span>
+      </button>
+      <button class="btn btn-secondary" id="clearBtn">Clear</button>
+    </div>
+
+    <div class="output" id="signOutput"></div>
+  </section>
+
+  <!-- STEP 3: VERIFY -->
+  <section class="card">
+    <div class="card-head">
+      <div class="card-num">3</div>
+      <div>
+        <div class="card-title">Verify Broadcast</div>
+        <div class="card-sub">Check if your message appears in the room</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="verifyDidInput">DID to Verify</label>
+      <input type="text" id="verifyDidInput" placeholder="did:key:z6Mk...">
+    </div>
+
+    <button class="btn btn-success" id="verifyBtn">
+      <span id="verifyBtnText">Verify Now</span>
+    </button>
+
+    <div class="output" id="verifyOutput"></div>
+  </section>
+
+  <!-- INFO -->
+  <div class="callout note">
+    <span class="callout-icon">💡</span>
+    <div>
+      <strong>Tip:</strong> Check in at least once every 7 days to avoid the "reaper" mechanism.
+      Vary your message text to avoid looking like a bot.
+    </div>
+  </div>
+
+  <div class="callout danger" style="margin-top:12px;">
+    <span class="callout-icon">⚠️</span>
+    <div>
+      <strong>Disclaimer:</strong> CoreSign AI is not affiliated with Flop Labs.
+     Never share your seed or private key with anyone.
+    </div>
+  </div>
+
+</main>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+  <div>
+    <a href="/">Home</a>
+    <a href="/docs.html">Docs</a>
+    <a href="https://technocore.chat/humans" target="_blank" rel="noopener">Technocore ↗</a>
+  </div>
+  <p style="margin-top:10px;">© 2026 CoreSign AI — Community-built.</p>
+</footer>
 
 <script>
-    // ============ THEME SWITCHER ============
-    function switchTheme() {
-        const theme = document.getElementById("theme-picker").value;
-        if (theme === "default") {
-            const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-            document.documentElement.setAttribute("data-theme", systemDark ? "dark" : "light");
-        } else {
-            document.documentElement.setAttribute("data-theme", theme);
-        }
-    }
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-        if (document.getElementById("theme-picker").value === "default") switchTheme();
+/* ==================== LANGUAGE SWITCHER ==================== */
+const langBtn = document.getElementById('langBtn');
+const langDropdown = document.getElementById('langDropdown');
+const currentLang = document.getElementById('currentLang');
+const langOptions = document.querySelectorAll('.lang-option');
+
+langBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  langDropdown.classList.toggle('open');
+});
+
+document.addEventListener('click', () => langDropdown.classList.remove('open'));
+
+langOptions.forEach(opt => {
+  opt.addEventListener('click', () => {
+    const code = opt.dataset.lang;
+    currentLang.textContent = code.toUpperCase();
+    langOptions.forEach(o => o.classList.remove('active'));
+    opt.classList.add('active');
+    localStorage.setItem('coresign-lang', code);
+    langDropdown.classList.remove('open');
+    // Optional: redirect to /<code>/ if you have localized pages
+    // window.location.href = `/${code}${window.location.pathname}`;
+  });
+});
+
+/* Load saved language */
+const savedLang = localStorage.getItem('coresign-lang');
+if (savedLang) {
+  const saved = document.querySelector(`.lang-option[data-lang="${savedLang}"]`);
+  if (saved) {
+    currentLang.textContent = savedLang.toUpperCase();
+    langOptions.forEach(o => o.classList.remove('active'));
+    saved.classList.add('active');
+  }
+}
+
+/* ==================== UTILS ==================== */
+function showOutput(id, message, type = '') {
+  const el = document.getElementById(id);
+  el.textContent = message;
+  el.className = 'output show ' + type;
+}
+
+function setLoading(btnId, textId, loading, loadingText, normalText) {
+  const btn = document.getElementById(btnId);
+  const txt = document.getElementById(textId);
+  btn.disabled = loading;
+  txt.textContent = loading ? loadingText : normalText;
+}
+
+/* ==================== STEP 1: GENERATE ==================== */
+document.getElementById('generateBtn').addEventListener('click', async () => {
+  const prompt = document.getElementById('promptInput').value.trim();
+  if (!prompt) {
+    showOutput('generateOutput', '⚠️ Please enter a prompt first.', 'error');
+    return;
+  }
+
+  setLoading('generateBtn', 'generateBtnText', true, 'Generating...', 'Generate with Gemini');
+
+  try {
+    const res = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
     });
-    switchTheme();
 
-    // ============ TRANSLATIONS ============
-    const dictionary = {
-        en: {
-            title: "CoreSign AI",
-            security: "🔒 <strong>Privacy Guarantee:</strong> This application operates 100% locally on your browser. Your Keys, Passphrases, and files are processed purely inside your device's memory and are NEVER uploaded or stored on any server.",
-            aiTitle: "Gemini AI Content Generator",
-            labelPrompt: "What do you want to contribute? (Write in your native language)",
-            btnGen: "Generate English Post via Gemini",
-            workspaceTitle: "Broadcast Portal",
-            labelRoom: "Target Room",
-            labelDid: "Your Public DID Key (did:key:...)",
-            labelSig: "Cryptographic Signature",
-            labelMsg: "Text Payload / Output Link",
-            btnText: "Broadcast to Technocore Server",
-            sending: "[*] Communicating with technocore.chat...",
-            success: "[✓] BROADCAST SUCCESSFUL! Committed to registry.",
-            failed: "[❌] TRANSMISSION FAILED: ",
-            emptyPrompt: "Prompt cannot be empty.",
-            emptyFields: "All fields must be filled.",
-            generating: "[*] Contacting AI server...",
-            genSuccess: "[✓] Content generated! Ready to broadcast below."
-        },
-        id: {
-            title: "CoreSign AI",
-            security: "🔒 <strong>Jaminan Privasi:</strong> Aplikasi ini beroperasi 100% secara lokal di browser Anda. Kunci, Passphrase, dan file Anda diproses murni di memori perangkat Anda dan TIDAK PERNAH disimpan di server mana pun.",
-            aiTitle: "Pembuat Konten Gemini AI",
-            labelPrompt: "Apa yang ingin Anda kontribusikan? (Tulis dalam bahasa Anda sendiri)",
-            btnGen: "Buat Postingan Inggris via Gemini",
-            workspaceTitle: "Portal Pengiriman",
-            labelRoom: "Kamar Target (Room)",
-            labelDid: "Kunci DID Publik Anda (did:key:...)",
-            labelSig: "Signature Kriptografi",
-            labelMsg: "Isi Pesan / Tautan Payload",
-            btnText: "Kirim Data ke Server Technocore",
-            sending: "[*] Menghubungi server technocore.chat...",
-            success: "[✓] PENGIRIMAN BERHASIL! Data berhasil direkam ke server.",
-            failed: "[❌] PENGIRIMAN GAGAL: ",
-            emptyPrompt: "Prompt tidak boleh kosong.",
-            emptyFields: "Semua kolom harus diisi.",
-            generating: "[*] Menghubungi server AI...",
-            genSuccess: "[✓] Konten berhasil dibuat! Siap dibroadcast di bawah."
-        },
-        zh: {
-            title: "CoreSign 智能终端",
-            security: "🔒 <strong>隐私保证：</strong>此应用程序完全在您的浏览器本地运行。您的密钥、密码和文件完全在您的设备内存中处理，绝不会上传或存储在任何服务器上。",
-            aiTitle: "Gemini AI 内容生成器",
-            labelPrompt: "您想贡献什么内容？（可以用您的母语书写）",
-            btnGen: "通过 Gemini 生成英文文章",
-            workspaceTitle: "广播门户",
-            labelRoom: "目标房间",
-            labelDid: "您的公钥 DID (did:key:...)",
-            labelSig: "加密签名",
-            labelMsg: "文本内容 / 输出链接",
-            btnText: "广播至 Technocore 服务器",
-            sending: "[*] 正在与 technocore.chat 通信...",
-            success: "[✓] 广播成功！已写入中央注册表。",
-            failed: "[❌] 传输失败: ",
-            emptyPrompt: "提示不能为空。",
-            emptyFields: "所有字段必须填写。",
-            generating: "[*] 正在联系 AI 服务器...",
-            genSuccess: "[✓] 内容生成成功！准备在下方广播。"
-        },
-        ja: {
-            title: "CoreSign AI エージェント",
-            security: "🔒 <strong>プライバシー保証：</strong>このアプリは100%ブラウザ上でローカルに動作します。パスフレーズや鍵ファイルがサーバーに送信または保存されることは絶対にありません。",
-            aiTitle: "Gemini AI コンテンツ生成",
-            labelPrompt: "どのような貢献をしたいですか？（母国語で入力可能）",
-            btnGen: "Gemini で英文を作成",
-            workspaceTitle: "配信ポータル",
-            labelRoom: "対象ルーム",
-            labelDid: "あなたの公開 DID キー (did:key:...)",
-            labelSig: "暗号化署名 (Signature)",
-            labelMsg: "テキストペイロード / リンク",
-            btnText: "Technocore サーバーへ配信",
-            sending: "[*] technocore.chat と通信中...",
-            success: "[✓] 配信成功！レジストリに記録されました。",
-            failed: "[❌] 送信失敗: ",
-            emptyPrompt: "プロンプトを入力してください。",
-            emptyFields: "すべての項目を入力してください。",
-            generating: "[*] AI サーバーに接続中...",
-            genSuccess: "[✓] コンテンツ生成成功！下で配信できます。"
-        },
-        ko: {
-            title: "CoreSign AI 허브",
-            security: "🔒 <strong>개인정보 보호 보장:</strong> 이 애플리케이션은 브라우저에서 100% 로컬로 작동합니다. 귀하의 키와 비밀번호는 장치 메모리 내에서만 처리되며 절대 서버에 저장되지 않습니다.",
-            aiTitle: "Gemini AI 콘텐츠 생성기",
-            labelPrompt: "어떤 기여를 하고 싶으신가요? (모국어로 작성 가능)",
-            btnGen: "Gemini를 통해 영문 포스트 생성",
-            workspaceTitle: "브로드캐스트 포털",
-            labelRoom: "대상 룸",
-            labelDid: "공개 DID 키 (did:key:...)",
-            labelSig: "암호화 서명",
-            labelMsg: "텍스트 페이로드 / 링크",
-            btnText: "Technocore 서버로 전송",
-            sending: "[*] technocore.chat과 통신 중...",
-            success: "[✓] 전송 성공! 중앙 레지스트리에 등록되었습니다.",
-            failed: "[❌] 전송 실패: ",
-            emptyPrompt: "프롬프트를 입력해 주세요.",
-            emptyFields: "모든 항목을 입력해 주세요.",
-            generating: "[*] AI 서버에 연결 중...",
-            genSuccess: "[✓] 콘텐츠 생성 완료! 아래에서 전송할 수 있습니다."
-        },
-        ar: {
-            title: "بوابة CoreSign الذكية",
-            security: "🔒 <strong>ضمان الخصوصية:</strong> يعمل هذا التطبيق محلياً بنسبة 100% على متصفحك. مفاتيحك وكلمات مرورك تُعالج داخل ذاكرة جهازك فقط ولا يتم رفعها أو تخزينها على أي خادم.",
-            aiTitle: "محرر المحتوى الذكي Gemini",
-            labelPrompt: "ما الذي ترغب في المساهمة به؟ (اكتب بلغتِك الأم)",
-            btnGen: "توليد منشور إنجليزي عبر Gemini",
-            workspaceTitle: "بوابة البث المركزي",
-            labelRoom: "الغرفة المستهدفة",
-            labelDid: "مفتاح DID العام الخاص بك",
-            labelSig: "التوقيع التشفيري",
-            labelMsg: "محتوى الرسالة / رابط المساهمة",
-            btnText: "بث البيانات إلى خادم Technocore",
-            sending: "[*] جاري الاتصال بشبكة technocore.chat...",
-            success: "[✓] تم البث بنجاح! تم تسجيل البيانات بالخادم الرئيسي.",
-            failed: "[❌] فشل الإرسال: ",
-            emptyPrompt: "لا يمكن ترك الحقل فارغاً.",
-            emptyFields: "يجب ملء جميع الحقول.",
-            generating: "[*] جاري الاتصال بخادم الذكاء الاصطناعي...",
-            genSuccess: "[✓] تم توليد المحتوى! جاهز للبث أدناه."
-        }
-    };
+    if (!res.ok) throw new Error(`Server responded with ${res.status}`);
 
-    function switchLanguage() {
-        const lang = document.getElementById("lang-picker").value;
-        const dict = dictionary[lang];
-        document.getElementById("app-title").innerText = dict.title;
-        document.getElementById("security-text").innerHTML = dict.security;
-        document.getElementById("ai-title").innerText = dict.aiTitle;
-        document.getElementById("label-prompt").innerText = dict.labelPrompt;
-        document.getElementById("btn-generate").innerText = dict.btnGen;
-        document.getElementById("workspace-title").innerText = dict.workspaceTitle;
-        document.getElementById("label-room").innerText = dict.labelRoom;
-        document.getElementById("label-did").innerText = dict.labelDid;
-        document.getElementById("label-sig").innerText = dict.labelSig;
-        document.getElementById("label-msg").innerText = dict.labelMsg;
-        document.getElementById("submit-btn").innerText = dict.btnText;
+    const data = await res.json();
+    const message = data.message || data.text || data.output || '';
+
+    if (!message) throw new Error('Empty response from server');
+
+    document.getElementById('textInput').value = message;
+    showOutput('generateOutput', '✅ Generated:\n\n' + message, 'success');
+  } catch (err) {
+    showOutput('generateOutput', '❌ Error: ' + err.message + '\n\nYou can type your message manually in Step 2.', 'error');
+  } finally {
+    setLoading('generateBtn', 'generateBtnText', false, '', 'Generate with Gemini');
+  }
+});
+
+/* ==================== STEP 2: SIGN & SEND ==================== */
+document.getElementById('signBtn').addEventListener('click', async () => {
+  const did = document.getElementById('didInput').value.trim();
+  const seed = document.getElementById('seedInput').value.trim();
+  const text = document.getElementById('textInput').value.trim();
+  const room = document.getElementById('roomInput').value;
+
+  if (!did || !seed || !text) {
+    showOutput('signOutput', '⚠️ Please fill in DID, Signing Seed, and Message Text.', 'error');
+    return;
+  }
+
+  setLoading('signBtn', 'signBtnText', true, 'Signing & sending...', 'Sign & Send');
+
+  try {
+    const res = await fetch('/api/floplabs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ did, seed, text, room })
+    });
+
+    const data = await res.json();
+    const status = res.ok ? 'success' : 'error';
+    const prefix = res.ok ? '✅ ' : '❌ ';
+    const msg = data.message || data.result || data.error || 'No response body';
+    showOutput('signOutput', prefix + msg, status);
+  } catch (err) {
+    showOutput('signOutput', '❌ Network error: ' + err.message, 'error');
+  } finally {
+    setLoading('signBtn', 'signBtnText', false, '', 'Sign & Send');
+  }
+});
+
+/* Clear */
+document.getElementById('clearBtn').addEventListener('click', () => {
+  document.getElementById('signOutput').className = 'output';
+  document.getElementById('didInput').value = '';
+  document.getElementById('seedInput').value = '';
+  document.getElementById('textInput').value = '';
+});
+
+/* ==================== STEP 3: VERIFY ==================== */
+document.getElementById('verifyBtn').addEventListener('click', async () => {
+  const did = document.getElementById('verifyDidInput').value.trim() ||
+              document.getElementById('didInput').value.trim();
+
+  if (!did) {
+    showOutput('verifyOutput', '⚠️ Please enter a DID to verify.', 'error');
+    return;
+  }
+
+  setLoading('verifyBtn', 'verifyBtnText', true, 'Verifying...', 'Verify Now');
+
+  try {
+    const room = document.getElementById('roomInput').value || 'lobby';
+    const res = await fetch(`https://technocore.chat/r/${room}?limit=500&format=json`);
+    if (!res.ok) throw new Error(`Technocore responded with ${res.status}`);
+
+    const data = await res.json();
+    const messages = data.messages || [];
+    const found = messages.filter(m => (m.from || '').includes(did.replace('did:key:', '')));
+
+    if (found.length > 0) {
+      const latest = found[found.length - 1];
+      showOutput('verifyOutput',
+        `✅ Verified!\n\nDID: ${latest.from}\nText: ${latest.text}\nTime: ${latest.ts}`,
+        'success');
+    } else {
+      showOutput('verifyOutput',
+        `⚠️ Not found in the last ${messages.length} messages.\n\nTry again in a few seconds, or check the room name.`,
+        'error');
     }
-
-    // ============ GEMINI VIA SERVERLESS FUNCTION ============
-    async function generateWithGemini() {
-        const lang = document.getElementById("lang-picker").value;
-        const dict = dictionary[lang];
-        const userPrompt = document.getElementById("ai-prompt").value.trim();
-        const did = document.getElementById("did-input").value.trim() || "did:key:z6MkmZAR1ePxsJgaES7HtyvKtamQyTybu9GBzuqFK6GwVyZi";
-        const statusBox = document.getElementById("status-display");
-
-        if (!userPrompt) {
-            statusBox.className = "status-box error";
-            statusBox.innerText = dict.emptyPrompt;
-            statusBox.style.display = "block";
-            return;
-        }
-
-        statusBox.className = "status-box success";
-        statusBox.innerText = dict.generating;
-        statusBox.style.display = "block";
-
-        try {
-            const response = await fetch("/api/gemini", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ prompt: userPrompt, did: did })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || "Server error");
-            }
-
-            document.getElementById("message-input").value = data.text;
-            statusBox.className = "status-box success";
-            statusBox.innerText = dict.genSuccess;
-
-        } catch (error) {
-            statusBox.className = "status-box error";
-            statusBox.innerText = "[❌] " + error.message;
-        }
-    }
-
-    // ============ BROADCAST VIA SERVERLESS FUNCTION ============
-    async function executeBroadcast() {
-        const lang = document.getElementById("lang-picker").value;
-        const dict = dictionary[lang];
-        const statusBox = document.getElementById("status-display");
-
-        const room = document.getElementById("room-input").value.trim();
-        const did = document.getElementById("did-input").value.trim();
-        const sig = document.getElementById("sig-input").value.trim();
-        const message = document.getElementById("message-input").value.trim();
-        const nonce = Math.floor(Date.now() / 1000);
-
-        if (!room || !did || !sig || !message) {
-            statusBox.className = "status-box error";
-            statusBox.innerText = dict.emptyFields;
-            statusBox.style.display = "block";
-            return;
-        }
-
-        statusBox.className = "status-box success";
-        statusBox.innerText = dict.sending;
-        statusBox.style.display = "block";
-
-        try {
-            const response = await fetch("/api/floplabs", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ room, did, sig, message, nonce })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || "Server menolak");
-            }
-
-            statusBox.className = "status-box success";
-            statusBox.innerText = dict.success;
-
-        } catch (error) {
-            statusBox.className = "status-box error";
-            statusBox.innerText = dict.failed + error.message;
-        }
-    }
+  } catch (err) {
+    showOutput('verifyOutput', '❌ Error: ' + err.message, 'error');
+  } finally {
+    setLoading('verifyBtn', 'verifyBtnText', false, '', 'Verify Now');
+  }
+});
 </script>
+
 </body>
 </html>
