@@ -50,3 +50,5 @@ This project is open-source and created as an independent infrastructure contrib
 
 ---
 *Disclaimer: CoreSign AI is an independent community project powered by decentralized infrastructure nodes. It is not officially affiliated with Flop Labs.*
+
+[![devs.surf](https://devs.surf/badges/subdomain.svg)](https://coresign.devs.surf)
