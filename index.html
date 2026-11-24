@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0a0e1a">
 <title>CoreSign AI — Sign & Broadcast for Technocore</title>
 <meta name="description" content="Sign and broadcast messages to the Technocore network. Multi-language, browser-based, free.">
-<!-- CoreSign v1.2.0 — client-side signing: your seed never leaves the browser -->
+<!-- CoreSign v1.2.1 — client-side signing: your seed never leaves the browser -->
 <style>
   :root {
     --bg: #0a0e1a;
@@ -1186,8 +1186,10 @@ document.getElementById('signBtn').addEventListener('click', async () => {
     /* Show the sent message itself, not the top of the room dump: in a
        busy room the dump's first lines are other people's messages, which
        looks like the send failed. The server shortens a DID to its first
-       4 chars + '…' + last 4, e.g. <z6Mk…VyZi>. */
-    const sentLine = body.split('\n').find(l => l.includes('…' + did.slice(-4)));
+       4 chars + '…' + last 4, e.g. <z6Mk…VyZi>. Take the LAST match: the
+       dump is oldest-first and may hold earlier messages from the same
+       DID, while the just-sent one is the newest. */
+    const sentLine = body.split('\n').filter(l => l.includes('…' + did.slice(-4))).pop();
     showOutput('signOutput',
       `✅ Sent to #${room} as ${did.slice(0, 18)}…\n\nNonce: ${nonce}\n${sentLine ? sentLine.trim() : body.slice(-300).trim()}` +
       '\n\nVerifying…',
