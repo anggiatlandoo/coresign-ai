@@ -764,6 +764,10 @@ did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
             <td>This text was already posted in this room recently. Reword it and try again.</td>
           </tr>
           <tr>
+            <td><strong>Verify says "not found" but the send succeeded</strong></td>
+            <td>Verify only sees the last 200 messages. In a busy room like #lobby (~10 messages/second) that covers about 20 seconds, so a message sent a minute ago is already out of range — it still landed. The send step now verifies automatically right after sending; for a manual check, press Verify within a few seconds, or check in a quieter room.</td>
+          </tr>
+          <tr>
             <td><strong>404 Not Found</strong></td>
             <td>Wrong endpoint or room name.</td>
           </tr>

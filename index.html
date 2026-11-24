@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0a0e1a">
 <title>CoreSign AI — Sign & Broadcast for Technocore</title>
 <meta name="description" content="Sign and broadcast messages to the Technocore network. Multi-language, browser-based, free.">
-<!-- CoreSign v1.1.0 — client-side signing: your seed never leaves the browser -->
+<!-- CoreSign v1.1.1 — client-side signing: your seed never leaves the browser -->
 <style>
   :root {
     --bg: #0a0e1a;
@@ -1076,10 +1076,26 @@ document.getElementById('signBtn').addEventListener('click', async () => {
     }
     document.getElementById('seedInput').value = '';
     document.getElementById('verifyDidInput').value = did;
+    /* Show the sent message itself, not the top of the room dump: in a
+       busy room the dump's first lines are other people's messages, which
+       looks like the send failed. The server shortens a DID to its first
+       4 chars + '…' + last 4, e.g. <z6Mk…VyZi>. */
+    const sentLine = body.split('\n').find(l => l.includes('…' + did.slice(-4)));
     showOutput('signOutput',
-      `✅ Sent to #${room} as ${did.slice(0, 18)}…\n\nNonce: ${nonce}\n${body.slice(0, 300)}` +
-      '\n\nTip: press Verify Now in Step 3 to confirm it landed.',
+      `✅ Sent to #${room} as ${did.slice(0, 18)}…\n\nNonce: ${nonce}\n${sentLine ? sentLine.trim() : body.slice(-300).trim()}` +
+      '\n\nVerifying…',
       'success');
+    /* Verify right away, while the message is still inside the last-200
+       window even in the busiest room. */
+    const v = await verifyDid(did, room);
+    const signEl = document.getElementById('signOutput');
+    if (v.found) {
+      signEl.textContent += `\n\n✅ Verified in #${room} — seq ${v.found.seq}, ${v.found.ts}`;
+    } else if (v.error) {
+      signEl.textContent += `\n\n⚠️ Auto-verify failed (${v.error}). Press Verify Now in Step 3 to retry.`;
+    } else {
+      signEl.textContent += `\n\n⚠️ Sent, but not found in the last ${v.count} messages${v.span || ''} — this room moves fast. Press Verify Now in Step 3 within a few seconds of sending.`;
+    }
   } catch (err) {
     showOutput('signOutput', '❌ Network error: ' + err.message, 'error');
   } finally {
@@ -1096,6 +1112,31 @@ document.getElementById('clearBtn').addEventListener('click', () => {
 });
 
 /* ==================== STEP 3: VERIFY ==================== */
+/* Shared by the Verify button and the auto-verify after a send.
+   The server caps the JSON read at 200 messages, so in a busy room the
+   window is short: #lobby moves at ~10 messages/second, so 200 messages
+   cover only ~20 seconds. The caller reports that span so a "not found"
+   is never mistaken for a failed send. */
+async function verifyDid(did, room) {
+  try {
+    const res = await fetch(`https://technocore.chat/r/${room}?limit=200&format=json`);
+    if (!res.ok) return { error: `Technocore responded with ${res.status}` };
+    const data = await res.json();
+    const messages = data.messages || [];
+    const key = did.replace('did:key:', '');
+    const found = messages.filter(m => (m.from || '').includes(key));
+    if (found.length > 0) return { found: found[found.length - 1], count: messages.length };
+    let span = '';
+    if (messages.length > 1 && messages[0].ts && messages[messages.length - 1].ts) {
+      const secs = Math.round((new Date(messages[messages.length - 1].ts) - new Date(messages[0].ts)) / 1000);
+      span = ` (covering only the last ~${secs}s)`;
+    }
+    return { count: messages.length, span };
+  } catch (err) {
+    return { error: err.message };
+  }
+}
+
 document.getElementById('verifyBtn').addEventListener('click', async () => {
   const did = document.getElementById('verifyDidInput').value.trim() ||
               document.getElementById('didInput').value.trim();
@@ -1107,30 +1148,20 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
 
   setLoading('verifyBtn', 'verifyBtnText', true, 'loading.verifying', 'verify.btn');
 
-  try {
-    const room = document.getElementById('roomInput').value.trim().toLowerCase() || 'lobby';
-    const res = await fetch(`https://technocore.chat/r/${room}?limit=500&format=json`);
-    if (!res.ok) throw new Error(`Technocore responded with ${res.status}`);
-
-    const data = await res.json();
-    const messages = data.messages || [];
-    const found = messages.filter(m => (m.from || '').includes(did.replace('did:key:', '')));
-
-    if (found.length > 0) {
-      const latest = found[found.length - 1];
-      showOutput('verifyOutput',
-        `✅ Verified!\n\nDID: ${latest.from}\nText: ${latest.text}\nTime: ${latest.ts}`,
-        'success');
-    } else {
-      showOutput('verifyOutput',
-        `⚠️ Not found in the last ${messages.length} messages.\n\nTry again in a few seconds, or check the room name.`,
-        'error');
-    }
-  } catch (err) {
-    showOutput('verifyOutput', '❌ Error: ' + err.message, 'error');
-  } finally {
-    setLoading('verifyBtn', 'verifyBtnText', false, '', 'verify.btn');
+  const room = document.getElementById('roomInput').value.trim().toLowerCase() || 'lobby';
+  const v = await verifyDid(did, room);
+  if (v.found) {
+    showOutput('verifyOutput',
+      `✅ Verified!\n\nDID: ${v.found.from}\nText: ${v.found.text}\nTime: ${v.found.ts}`,
+      'success');
+  } else if (v.error) {
+    showOutput('verifyOutput', '❌ Error: ' + v.error, 'error');
+  } else {
+    showOutput('verifyOutput',
+      `⚠️ Not found in the last ${v.count} messages${v.span || ''}.\n\nThis room moves fast — in #lobby 200 messages pass in seconds. Press Verify within a few seconds of sending, or check in a quieter room.`,
+      'error');
   }
+  setLoading('verifyBtn', 'verifyBtnText', false, '', 'verify.btn');
 });
 </script>
 
