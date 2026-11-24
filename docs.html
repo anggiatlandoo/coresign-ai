@@ -89,6 +89,20 @@
     font-size: 15px;
   }
 
+  /* ============ MAIN NAV ============ */
+  .main-nav { display: flex; gap: 2px; align-items: center; margin-left: auto; }
+  .main-nav a {
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+  .main-nav a:hover { color: var(--text); background: var(--bg-3); }
+  .main-nav a.active { color: var(--accent); }
+
   /* ============ LANGUAGE SWITCHER ============ */
   .lang-switcher { position: relative; }
 
@@ -228,7 +242,7 @@
   .toc-list {
     list-style: none;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 4px;
   }
 
@@ -249,12 +263,12 @@
 
   /* ============ SECTION ============ */
   .section {
-    margin-bottom: 32px;
+    margin-bottom: 36px;
     scroll-margin-top: 80px;
   }
 
   .section h2 {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     margin-bottom: 14px;
     padding-bottom: 10px;
@@ -263,7 +277,7 @@
   }
 
   .section h3 {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
     margin: 20px 0 10px;
     color: var(--text);
@@ -509,6 +523,9 @@
   }
 
   /* ============ MOBILE TWEAKS ============ */
+  @media (max-width: 640px) {
+    .main-nav { display: none; }
+  }
   @media (max-width: 480px) {
     body { font-size: 15px; }
     .header-inner { padding: 10px 12px; }
@@ -539,6 +556,13 @@
       <span class="logo-mark">C</span>
       <span>CoreSign AI</span>
     </a>
+
+    <nav class="main-nav">
+      <a href="/">Home</a>
+      <a href="/docs.html" class="active">Docs</a>
+      <a href="https://github.com/anggiatlandoo/coresign-ai" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://technocore.chat/humans" target="_blank" rel="noopener">Technocore ↗</a>
+    </nav>
 
   </div>
 </header>

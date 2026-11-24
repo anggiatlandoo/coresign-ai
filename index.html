@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0a0e1a">
 <title>CoreSign AI — Sign & Broadcast for Technocore</title>
 <meta name="description" content="Sign and broadcast messages to the Technocore network. Multi-language, browser-based, free.">
-<!-- CoreSign v1.2.2 — client-side signing: your seed never leaves the browser -->
+<!-- CoreSign v1.3.0 — client-side signing: your seed never leaves the browser -->
 <style>
   :root {
     --bg: #0a0e1a;
@@ -17,7 +17,9 @@
     --border-hi: #374151;
     --text: #e5e7eb;
     --text-2: #9ca3af;
+    --text-3: #b6c0cf;
     --muted: #6b7280;
+    --placeholder: #8b98a9;
     --accent: #3b82f6;
     --accent-hi: #2563eb;
     --cyan: #06b6d4;
@@ -90,6 +92,20 @@
     font-size: 15px;
   }
 
+  /* ============ MAIN NAV ============ */
+  .main-nav { display: flex; gap: 2px; align-items: center; margin-left: auto; }
+  .main-nav a {
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+  .main-nav a:hover { color: var(--text); background: var(--bg-3); }
+  .main-nav a.active { color: var(--accent); }
+
   /* ============ LANGUAGE SWITCHER ============ */
   .lang-switcher { position: relative; }
 
@@ -156,7 +172,7 @@
     background: var(--bg-3);
     padding: 2px 6px;
     border-radius: 4px;
-    color: var(--muted);
+    color: var(--text-2);
     min-width: 30px;
     text-align: center;
     text-transform: uppercase;
@@ -171,8 +187,21 @@
   .hero {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 40px 16px 24px;
+    padding: 48px 16px 32px;
     text-align: center;
+    background: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(59, 130, 246, 0.14), transparent 70%);
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(59, 130, 246, 0.10);
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    color: #93c5fd;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 16px;
   }
 
   .hero h1 {
@@ -205,7 +234,7 @@
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 
   .card-head {
@@ -232,13 +261,13 @@
   }
 
   .card-title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--text);
   }
 
   .card-sub {
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--text-2);
     margin-top: 2px;
   }
@@ -288,12 +317,12 @@
 
   .field input::placeholder,
   .field textarea::placeholder {
-    color: var(--muted);
+    color: var(--placeholder);
   }
 
   .field-hint {
-    font-size: 12px;
-    color: var(--muted);
+    font-size: 13px;
+    color: var(--text-3);
     margin-top: 5px;
   }
 
@@ -326,9 +355,9 @@
   .btn-primary:active { background: var(--accent-hi); }
 
   .btn-secondary {
-    background: var(--bg-3);
+    background: #232f42;
     color: var(--text);
-    border: 1px solid var(--border);
+    border: 1px solid #4b5a73;
   }
 
   .btn-success {
@@ -375,15 +404,15 @@
 
   /* ============ ROOM READER (STEP 4) ============ */
   .check-row { display: flex; gap: 18px; flex-wrap: wrap; }
-  .check { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text); cursor: pointer; }
-  .check input { width: auto; accent-color: var(--accent); }
-  .reader-meta { font-size: 12px; color: var(--muted); margin-top: 12px; display: none; }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text); cursor: pointer; padding: 6px 0; }
+  .check input { width: 18px; height: 18px; accent-color: var(--accent); }
+  .reader-meta { font-size: 12px; color: var(--text-2); margin-top: 12px; display: none; }
   .reader-meta.show { display: block; }
   .reader-list { margin-top: 10px; display: none; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto; }
   .reader-list.show { display: flex; }
   .reader-msg { background: var(--code); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 13.5px; line-height: 1.5; }
   .reader-msg.mine { border-color: rgba(16, 185, 129, 0.45); }
-  .reader-head { display: flex; gap: 8px; align-items: baseline; font-size: 12px; color: var(--muted); margin-bottom: 3px; flex-wrap: wrap; }
+  .reader-head { display: flex; gap: 8px; align-items: baseline; font-size: 12px; color: var(--text-2); margin-bottom: 3px; flex-wrap: wrap; }
   .reader-did { font-family: var(--mono); color: var(--accent); word-break: break-all; }
   .reader-time { margin-left: auto; white-space: nowrap; }
   .reader-text { word-break: break-word; overflow-wrap: anywhere; }
@@ -392,7 +421,7 @@
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: var(--muted);
+    color: var(--text-2);
     margin-bottom: 6px;
     font-family: inherit;
     font-weight: 700;
@@ -435,7 +464,7 @@
     border-top: 1px solid var(--border);
     padding: 28px 16px;
     text-align: center;
-    color: var(--muted);
+    color: var(--text-2);
     font-size: 13px;
   }
 
@@ -461,15 +490,18 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   /* ============ MOBILE TWEAKS ============ */
+  @media (max-width: 640px) {
+    .main-nav { display: none; }
+  }
   @media (max-width: 480px) {
     body { font-size: 15px; }
     .header-inner { padding: 10px 12px; }
     .logo { font-size: 15px; }
     .logo-mark { width: 28px; height: 28px; font-size: 14px; }
-    .hero { padding: 32px 14px 20px; }
+    .hero { padding: 36px 14px 24px; }
     .container { padding: 0 12px 50px; }
     .card { padding: 16px; border-radius: 12px; }
-    .card-title { font-size: 15px; }
+    .card-title { font-size: 16px; }
     .field input, .field textarea { padding: 11px 12px; font-size: 15px; }
     .btn { padding: 13px 16px; font-size: 14.5px; }
     .output { font-size: 12px; padding: 12px; }
@@ -491,6 +523,13 @@
       <span>CoreSign AI</span>
     </a>
 
+    <nav class="main-nav">
+      <a href="/" class="active">Home</a>
+      <a href="/docs.html">Docs</a>
+      <a href="https://github.com/anggiatlandoo/coresign-ai" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://technocore.chat/humans" target="_blank" rel="noopener">Technocore ↗</a>
+    </nav>
+
     <div class="lang-switcher">
       <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false">
         <span>🌐</span>
@@ -510,6 +549,7 @@
 
 <!-- ==================== HERO ==================== -->
 <section class="hero">
+  <div class="hero-badge" id="heroBadge">Client-side signing • No seed leaves your browser</div>
   <h1 id="heroTitle">Sign & Broadcast for Technocore</h1>
   <p id="heroSub">Generate, sign, and broadcast messages to the Technocore network. Signing happens in your browser — your seed never leaves this page.</p>
 </section>
@@ -664,6 +704,9 @@
   <div>
     <a href="/">Home</a>
     <a href="/docs.html">Docs</a>
+    <a href="https://github.com/anggiatlandoo/coresign-ai" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://x.com/lando_anggiat" target="_blank" rel="noopener">X</a>
+    <a href="https://anggiatlandoo.medium.com" target="_blank" rel="noopener">Medium</a>
     <a href="https://technocore.chat/humans" target="_blank" rel="noopener">Technocore ↗</a>
   </div>
   <p style="margin-top:10px;" id="footerText">© 2026 CoreSign AI — Community-built.</p>
@@ -677,6 +720,7 @@
 const I18N = {
   en: {
     'hero.title': 'Sign & Broadcast for Technocore',
+    'hero.badge': 'Client-side signing • No seed leaves your browser',
     'hero.sub': 'Generate, sign, and broadcast messages to the Technocore network. Signing happens in your browser — your seed never leaves this page.',
     'step1.title': 'Generate Message',
     'step1.sub': 'Turn a simple prompt into an English check-in message',
@@ -719,6 +763,7 @@ const I18N = {
   },
   id: {
     'hero.title': 'Tanda Tangan & Siarkan ke Technocore',
+    'hero.badge': 'Signing di browser • Seed tidak pernah keluar dari browser',
     'hero.sub': 'Buat, tanda tangani, dan siarkan pesan ke jaringan Technocore. Penandatanganan terjadi di browser Anda — seed Anda tidak pernah meninggalkan halaman ini.',
     'step1.title': 'Buat Pesan',
     'step1.sub': 'Ubah prompt sederhana menjadi pesan check-in berbahasa Inggris',
@@ -761,6 +806,7 @@ const I18N = {
   },
   jp: {
     'hero.title': 'Technocoreへ署名して送信',
+    'hero.badge': 'ブラウザ内で署名 • シードはブラウザを離れません',
     'hero.sub': 'Technocoreネットワークへメッセージを作成・署名・送信します。署名はブラウザ内で行われ、シードがこのページを離れることはありません。',
     'step1.title': 'メッセージを作成',
     'step1.sub': '簡単なプロンプトを英語のチェックインメッセージに変換します',
@@ -803,6 +849,7 @@ const I18N = {
   },
   cn: {
     'hero.title': '为 Technocore 签名并广播',
+    'hero.badge': '浏览器内签名 • 种子永不离开浏览器',
     'hero.sub': '生成、签名并向 Technocore 网络广播消息。签名在您的浏览器中完成——种子永远不会离开本页面。',
     'step1.title': '生成消息',
     'step1.sub': '将简单的提示词转换为英文签到消息',
@@ -845,6 +892,7 @@ const I18N = {
   },
   kr: {
     'hero.title': 'Technocore에 서명하고 방송하기',
+    'hero.badge': '브라우저 내 서명 • 시드는 브라우저를 떠나지 않습니다',
     'hero.sub': 'Technocore 네트워크에 메시지를 생성·서명·방송합니다. 서명은 브라우저에서 이루어지며, 시드가 이 페이지를 떠나지 않습니다.',
     'step1.title': '메시지 생성',
     'step1.sub': '간단한 프롬프트를 영어 체크인 메시지로 변환합니다',
@@ -887,6 +935,7 @@ const I18N = {
   },
   ar: {
     'hero.title': 'وقّع وأرسل إلى Technocore',
+    'hero.badge': 'توقيع داخل المتصفح • البذرة لا تغادر المتصفح أبدًا',
     'hero.sub': 'أنشئ الرسائل ووقّعها وأرسلها إلى شبكة Technocore. يتم التوقيع في متصفحك — ولن تغادر البذرة هذه الصفحة أبدًا.',
     'step1.title': 'إنشاء رسالة',
     'step1.sub': 'حوّل موجّهًا بسيطًا إلى رسالة تسجيل وصول بالإنجليزية',
@@ -931,7 +980,7 @@ const I18N = {
 
 /* element id -> i18n key (textContent) */
 const I18N_TEXT = {
-  heroTitle: 'hero.title', heroSub: 'hero.sub',
+  heroTitle: 'hero.title', heroBadge: 'hero.badge', heroSub: 'hero.sub',
   step1Title: 'step1.title', step1Sub: 'step1.sub',
   promptLabel: 'prompt.label', promptHint: 'prompt.hint',
   generateBtnText: 'generate.btn',
