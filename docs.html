@@ -87,6 +87,32 @@
     font-weight: 800;
     color: #fff;
     font-size: 15px;
+    position: relative;
+    overflow: hidden;
+    filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.45));
+  }
+
+  /* Shine sweep across the logo (from Lando's draft) */
+  .logo-mark::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -100%;
+    width: 50%;
+    height: 200%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.6), transparent);
+    transform: rotate(25deg);
+    animation: logo-sweep 3s infinite;
+  }
+
+  @keyframes logo-sweep {
+    0% { left: -100%; }
+    30% { left: 200%; }
+    100% { left: 200%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo-mark::after { animation: none; }
   }
 
   /* ============ MAIN NAV ============ */
