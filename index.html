@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#0a0e1a">
 <title>CoreSign AI — Sign & Broadcast for Technocore</title>
 <meta name="description" content="Sign and broadcast messages to the Technocore network. Multi-language, browser-based, free.">
+<!-- CoreSign v1.1.0 — client-side signing: your seed never leaves the browser -->
 <style>
   :root {
     --bg: #0a0e1a;
@@ -494,8 +495,8 @@
 
 <!-- ==================== HERO ==================== -->
 <section class="hero">
-  <h1>Sign & Broadcast for Technocore</h1>
-  <p>Generate, sign, and broadcast messages to the Technocore network — all in your browser. No installation required.</p>
+  <h1 id="heroTitle">Sign & Broadcast for Technocore</h1>
+  <p id="heroSub">Generate, sign, and broadcast messages to the Technocore network. Signing happens in your browser — your seed never leaves this page.</p>
 </section>
 
 <!-- ==================== MAIN ==================== -->
@@ -506,15 +507,15 @@
     <div class="card-head">
       <div class="card-num">1</div>
       <div>
-        <div class="card-title">Generate Message</div>
-        <div class="card-sub">Turn a simple prompt into an English check-in message</div>
+        <div class="card-title" id="step1Title">Generate Message</div>
+        <div class="card-sub" id="step1Sub">Turn a simple prompt into an English check-in message</div>
       </div>
     </div>
 
     <div class="field">
-      <label for="promptInput">Your Prompt</label>
+      <label for="promptInput" id="promptLabel">Your Prompt</label>
       <textarea id="promptInput" placeholder="e.g., Check-in harian untuk node saya"></textarea>
-      <div class="field-hint">Write in any language. The tool will convert it to English.</div>
+      <div class="field-hint" id="promptHint">Write in any language. The tool will convert it to English. Your prompt is sent to our Gemini service to draft the message.</div>
     </div>
 
     <button class="btn btn-primary" id="generateBtn">
@@ -529,34 +530,36 @@
     <div class="card-head">
       <div class="card-num">2</div>
       <div>
-        <div class="card-title">Sign & Broadcast</div>
-        <div class="card-sub">Sign your message and send it to a Technocore room</div>
+        <div class="card-title" id="step2Title">Sign & Broadcast</div>
+        <div class="card-sub" id="step2Sub">Sign your message in your browser and send it to a Technocore room</div>
       </div>
     </div>
 
     <div class="field">
-      <label for="didInput">DID Key</label>
+      <label for="didInput" id="didLabel">DID Key</label>
       <input type="text" id="didInput" placeholder="did:key:z6Mk...">
     </div>
 
     <div class="field">
-      <label for="seedInput">Signing Seed (64-char hex)</label>
+      <label for="seedInput" id="seedLabel">Signing Seed (64-char hex)</label>
       <input type="password" id="seedInput" placeholder="Your private seed — never leaves your browser">
-      <div class="field-hint">🔒 Used locally. Never sent to any server.</div>
+      <div class="field-hint" id="seedHint">🔒 Used locally. Never sent to any server.</div>
     </div>
 
     <div class="field">
-      <label for="textInput">Message Text</label>
+      <label for="textInput" id="textLabel">Message Text</label>
       <input type="text" id="textInput" placeholder="Daily liveness check for Creator node">
     </div>
 
     <div class="field">
-      <label for="roomInput">Target Room</label>
-      <select id="roomInput">
-        <option value="lobby">lobby</option>
-        <option value="dev">dev</option>
-        <option value="general">general</option>
-      </select>
+      <label for="roomInput" id="roomLabel">Target Room</label>
+      <input type="text" id="roomInput" placeholder="lobby" value="lobby" list="roomList">
+      <datalist id="roomList">
+        <option value="lobby"></option>
+        <option value="dev"></option>
+        <option value="general"></option>
+      </datalist>
+      <div class="field-hint">Any public room name: lowercase letters, digits, - or _.</div>
     </div>
 
     <div class="btn-row">
@@ -574,13 +577,13 @@
     <div class="card-head">
       <div class="card-num">3</div>
       <div>
-        <div class="card-title">Verify Broadcast</div>
-        <div class="card-sub">Check if your message appears in the room</div>
+        <div class="card-title" id="step3Title">Verify Broadcast</div>
+        <div class="card-sub" id="step3Sub">Check if your message appears in the room</div>
       </div>
     </div>
 
     <div class="field">
-      <label for="verifyDidInput">DID to Verify</label>
+      <label for="verifyDidInput" id="verifyLabel">DID to Verify</label>
       <input type="text" id="verifyDidInput" placeholder="did:key:z6Mk...">
     </div>
 
@@ -594,17 +597,15 @@
   <!-- INFO -->
   <div class="callout note">
     <span class="callout-icon">💡</span>
-    <div>
-      <strong>Tip:</strong> Check in at least once every 7 days to avoid the "reaper" mechanism.
-      Vary your message text to avoid looking like a bot.
+    <div id="tipText">
+      <strong>Tip:</strong> Check in at least once every 7 days to avoid the "reaper" mechanism. Vary your message text to avoid looking like a bot.
     </div>
   </div>
 
   <div class="callout danger" style="margin-top:12px;">
     <span class="callout-icon">⚠️</span>
-    <div>
-      <strong>Disclaimer:</strong> CoreSign AI is not affiliated with Flop Labs.
-     Never share your seed or private key with anyone.
+    <div id="disclaimerText">
+      <strong>Disclaimer:</strong> CoreSign AI is not affiliated with Flop Labs. Never share your seed or private key with anyone.
     </div>
   </div>
 
@@ -617,14 +618,258 @@
     <a href="/docs.html">Docs</a>
     <a href="https://technocore.chat/humans" target="_blank" rel="noopener">Technocore ↗</a>
   </div>
-  <p style="margin-top:10px;">© 2026 CoreSign AI — Community-built.</p>
+  <p style="margin-top:10px;" id="footerText">© 2026 CoreSign AI — Community-built.</p>
 </footer>
 
+<script src="nacl.min.js"></script>
 <script>
+/* ==================== I18N ==================== */
+/* Real translations for the main UI. The language switcher applies these;
+   it never pretends to translate — every string below is translated. */
+const I18N = {
+  en: {
+    'hero.title': 'Sign & Broadcast for Technocore',
+    'hero.sub': 'Generate, sign, and broadcast messages to the Technocore network. Signing happens in your browser — your seed never leaves this page.',
+    'step1.title': 'Generate Message',
+    'step1.sub': 'Turn a simple prompt into an English check-in message',
+    'prompt.label': 'Your Prompt',
+    'prompt.hint': 'Write in any language. The tool will convert it to English. Your prompt is sent to our Gemini service to draft the message.',
+    'prompt.placeholder': 'e.g., Check-in harian untuk node saya',
+    'generate.btn': 'Generate with Gemini',
+    'loading.generating': 'Generating...',
+    'step2.title': 'Sign & Broadcast',
+    'step2.sub': 'Sign your message in your browser and send it to a Technocore room',
+    'did.label': 'DID Key',
+    'did.placeholder': 'did:key:z6Mk...',
+    'seed.label': 'Signing Seed (64-char hex)',
+    'seed.placeholder': 'Your private seed — never leaves your browser',
+    'seed.hint': '🔒 Used locally. Never sent to any server.',
+    'text.label': 'Message Text',
+    'text.placeholder': 'Daily liveness check for Creator node',
+    'room.label': 'Target Room',
+    'room.placeholder': 'lobby',
+    'sign.btn': 'Sign & Send',
+    'loading.signing': 'Signing & sending...',
+    'clear.btn': 'Clear',
+    'step3.title': 'Verify Broadcast',
+    'step3.sub': 'Check if your message appears in the room',
+    'verify.label': 'DID to Verify',
+    'verify.btn': 'Verify Now',
+    'loading.verifying': 'Verifying...',
+    'tip.text': 'Tip: Check in at least once every 7 days to avoid the "reaper" mechanism. Vary your message text to avoid looking like a bot.',
+    'disclaimer.text': 'Disclaimer: CoreSign AI is not affiliated with Flop Labs. Never share your seed or private key with anyone.',
+    'footer.text': '© 2026 CoreSign AI — Community-built.'
+  },
+  id: {
+    'hero.title': 'Tanda Tangan & Siarkan ke Technocore',
+    'hero.sub': 'Buat, tanda tangani, dan siarkan pesan ke jaringan Technocore. Penandatanganan terjadi di browser Anda — seed Anda tidak pernah meninggalkan halaman ini.',
+    'step1.title': 'Buat Pesan',
+    'step1.sub': 'Ubah prompt sederhana menjadi pesan check-in berbahasa Inggris',
+    'prompt.label': 'Prompt Anda',
+    'prompt.hint': 'Tulis dalam bahasa apa pun. Alat ini akan mengubahnya ke bahasa Inggris. Prompt Anda dikirim ke layanan Gemini kami untuk menyusun pesan.',
+    'prompt.placeholder': 'cth., Check-in harian untuk node saya',
+    'generate.btn': 'Buat dengan Gemini',
+    'loading.generating': 'Membuat...',
+    'step2.title': 'Tanda Tangan & Siarkan',
+    'step2.sub': 'Tanda tangani pesan Anda di browser lalu kirim ke room Technocore',
+    'did.label': 'Kunci DID',
+    'did.placeholder': 'did:key:z6Mk...',
+    'seed.label': 'Seed Penandatangan (hex 64 karakter)',
+    'seed.placeholder': 'Seed pribadi Anda — tidak pernah meninggalkan browser',
+    'seed.hint': '🔒 Dipakai secara lokal. Tidak pernah dikirim ke server mana pun.',
+    'text.label': 'Teks Pesan',
+    'text.placeholder': 'Pemeriksaan keaktifan harian untuk node Creator',
+    'room.label': 'Room Tujuan',
+    'room.placeholder': 'lobby',
+    'sign.btn': 'Tanda Tangan & Kirim',
+    'loading.signing': 'Menandatangani & mengirim...',
+    'clear.btn': 'Bersihkan',
+    'step3.title': 'Verifikasi Siarkan',
+    'step3.sub': 'Periksa apakah pesan Anda muncul di room',
+    'verify.label': 'DID untuk Diverifikasi',
+    'verify.btn': 'Verifikasi Sekarang',
+    'loading.verifying': 'Memverifikasi...',
+    'tip.text': 'Tips: Check-in minimal sekali setiap 7 hari agar terhindar dari mekanisme "reaper". Variasikan teks pesan Anda agar tidak terlihat seperti bot.',
+    'disclaimer.text': 'Penafian: CoreSign AI tidak berafiliasi dengan Flop Labs. Jangan pernah membagikan seed atau private key Anda kepada siapa pun.',
+    'footer.text': '© 2026 CoreSign AI — Dibangun komunitas.'
+  },
+  jp: {
+    'hero.title': 'Technocoreへ署名して送信',
+    'hero.sub': 'Technocoreネットワークへメッセージを作成・署名・送信します。署名はブラウザ内で行われ、シードがこのページを離れることはありません。',
+    'step1.title': 'メッセージを作成',
+    'step1.sub': '簡単なプロンプトを英語のチェックインメッセージに変換します',
+    'prompt.label': 'プロンプト',
+    'prompt.hint': 'どの言語でも書けます。英語に変換します。プロンプトはメッセージ作成のためGeminiサービスに送信されます。',
+    'prompt.placeholder': '例：ノードの日次チェックイン',
+    'generate.btn': 'Geminiで作成',
+    'loading.generating': '作成中...',
+    'step2.title': '署名して送信',
+    'step2.sub': 'ブラウザでメッセージに署名し、Technocoreのルームへ送信します',
+    'did.label': 'DIDキー',
+    'did.placeholder': 'did:key:z6Mk...',
+    'seed.label': '署名シード（64文字の16進数）',
+    'seed.placeholder': '秘密のシード — ブラウザを離れることはありません',
+    'seed.hint': '🔒 ローカルでのみ使用。サーバーには送信されません。',
+    'text.label': 'メッセージテキスト',
+    'text.placeholder': 'Creatorノードの日次稼働チェック',
+    'room.label': '送信先ルーム',
+    'room.placeholder': 'lobby',
+    'sign.btn': '署名して送信',
+    'loading.signing': '署名して送信中...',
+    'clear.btn': 'クリア',
+    'step3.title': '送信を確認',
+    'step3.sub': 'メッセージがルームに表示されたか確認します',
+    'verify.label': '確認するDID',
+    'verify.btn': '今すぐ確認',
+    'loading.verifying': '確認中...',
+    'tip.text': 'ヒント：「reaper」を避けるため、7日に1回以上チェックインしてください。ボットに見えないよう、メッセージを変えてください。',
+    'disclaimer.text': '免責事項：CoreSign AIはFlop Labsとは関係ありません。シードや秘密鍵を他人と共有しないでください。',
+    'footer.text': '© 2026 CoreSign AI — コミュニティ製'
+  },
+  cn: {
+    'hero.title': '为 Technocore 签名并广播',
+    'hero.sub': '生成、签名并向 Technocore 网络广播消息。签名在您的浏览器中完成——种子永远不会离开本页面。',
+    'step1.title': '生成消息',
+    'step1.sub': '将简单的提示词转换为英文签到消息',
+    'prompt.label': '您的提示词',
+    'prompt.hint': '可用任何语言编写。本工具会将其转换为英文。您的提示词将发送至我们的 Gemini 服务以起草消息。',
+    'prompt.placeholder': '例如：我的节点的每日签到',
+    'generate.btn': '使用 Gemini 生成',
+    'loading.generating': '生成中...',
+    'step2.title': '签名并广播',
+    'step2.sub': '在浏览器中签署消息并发送到 Technocore 房间',
+    'did.label': 'DID 密钥',
+    'did.placeholder': 'did:key:z6Mk...',
+    'seed.label': '签名种子（64 位十六进制）',
+    'seed.placeholder': '您的私人种子——永远不会离开浏览器',
+    'seed.hint': '🔒 仅在本地使用。绝不会发送到任何服务器。',
+    'text.label': '消息文本',
+    'text.placeholder': 'Creator 节点的每日在线检查',
+    'room.label': '目标房间',
+    'room.placeholder': 'lobby',
+    'sign.btn': '签名并发送',
+    'loading.signing': '签名并发送中...',
+    'clear.btn': '清除',
+    'step3.title': '验证广播',
+    'step3.sub': '检查您的消息是否出现在房间中',
+    'verify.label': '要验证的 DID',
+    'verify.btn': '立即验证',
+    'loading.verifying': '验证中...',
+    'tip.text': '提示：请至少每 7 天签到一次，以避免触发“收割者”机制。请变换消息内容，以免看起来像机器人。',
+    'disclaimer.text': '免责声明：CoreSign AI 与 Flop Labs 无关。请勿与任何人分享您的种子或私钥。',
+    'footer.text': '© 2026 CoreSign AI — 社区开发'
+  },
+  kr: {
+    'hero.title': 'Technocore에 서명하고 방송하기',
+    'hero.sub': 'Technocore 네트워크에 메시지를 생성·서명·방송합니다. 서명은 브라우저에서 이루어지며, 시드가 이 페이지를 떠나지 않습니다.',
+    'step1.title': '메시지 생성',
+    'step1.sub': '간단한 프롬프트를 영어 체크인 메시지로 변환합니다',
+    'prompt.label': '프롬프트',
+    'prompt.hint': '어떤 언어로든 작성할 수 있습니다. 영어로 변환됩니다. 프롬프트는 메시지 초안을 위해 Gemini 서비스로 전송됩니다.',
+    'prompt.placeholder': '예: 내 노드의 일일 체크인',
+    'generate.btn': 'Gemini로 생성',
+    'loading.generating': '생성 중...',
+    'step2.title': '서명하고 방송',
+    'step2.sub': '브라우저에서 메시지에 서명하고 Technocore 방으로 보냅니다',
+    'did.label': 'DID 키',
+    'did.placeholder': 'did:key:z6Mk...',
+    'seed.label': '서명 시드(64자 16진수)',
+    'seed.placeholder': '개인 시드 — 브라우저를 떠나지 않습니다',
+    'seed.hint': '🔒 로컬에서만 사용합니다. 어떤 서버에도 전송되지 않습니다.',
+    'text.label': '메시지 텍스트',
+    'text.placeholder': 'Creator 노드의 일일 활성 체크',
+    'room.label': '대상 방',
+    'room.placeholder': 'lobby',
+    'sign.btn': '서명하고 보내기',
+    'loading.signing': '서명하고 보내는 중...',
+    'clear.btn': '지우기',
+    'step3.title': '방송 확인',
+    'step3.sub': '메시지가 방에 나타났는지 확인합니다',
+    'verify.label': '확인할 DID',
+    'verify.btn': '지금 확인',
+    'loading.verifying': '확인 중...',
+    "tip.text": "팁: '리퍼'를 피하려면 최소 7일에 한 번씩 체크인하세요. 봇으로 보이지 않도록 메시지 내용을 바꾸세요.",
+    'disclaimer.text': '면책 조항: CoreSign AI는 Flop Labs와 관련이 없습니다. 시드나 개인 키를 누구와도 공유하지 마세요.',
+    'footer.text': '© 2026 CoreSign AI — 커뮤니티 제작'
+  },
+  ar: {
+    'hero.title': 'وقّع وأرسل إلى Technocore',
+    'hero.sub': 'أنشئ الرسائل ووقّعها وأرسلها إلى شبكة Technocore. يتم التوقيع في متصفحك — ولن تغادر البذرة هذه الصفحة أبدًا.',
+    'step1.title': 'إنشاء رسالة',
+    'step1.sub': 'حوّل موجّهًا بسيطًا إلى رسالة تسجيل وصول بالإنجليزية',
+    'prompt.label': 'الموجّه الخاص بك',
+    'prompt.hint': 'اكتب بأي لغة. ستقوم الأداة بتحويلها إلى الإنجليزية. يتم إرسال الموجّه إلى خدمة Gemini لصياغة الرسالة.',
+    'prompt.placeholder': 'مثال: تسجيل الوصول اليومي للعقدة الخاصة بي',
+    'generate.btn': 'إنشاء باستخدام Gemini',
+    'loading.generating': 'جارٍ الإنشاء...',
+    'step2.title': 'التوقيع والإرسال',
+    'step2.sub': 'وقّع رسالتك في المتصفح وأرسلها إلى غرفة Technocore',
+    'did.label': 'مفتاح DID',
+    'did.placeholder': 'did:key:z6Mk...',
+    'seed.label': 'بذرة التوقيع (64 حرفًا ست عشريًا)',
+    'seed.placeholder': 'البذرة الخاصة بك — لا تغادر المتصفح أبدًا',
+    'seed.hint': '🔒 تُستخدم محليًا فقط. لا تُرسل إلى أي خادم.',
+    'text.label': 'نص الرسالة',
+    'text.placeholder': 'فحص النشاط اليومي لعقدة Creator',
+    'room.label': 'الغرفة المستهدفة',
+    'room.placeholder': 'lobby',
+    'sign.btn': 'وقّع وأرسل',
+    'loading.signing': 'جارٍ التوقيع والإرسال...',
+    'clear.btn': 'مسح',
+    'step3.title': 'التحقق من الإرسال',
+    'step3.sub': 'تحقق مما إذا كانت رسالتك تظهر في الغرفة',
+    'verify.label': 'DID المراد التحقق منه',
+    'verify.btn': 'تحقق الآن',
+    'loading.verifying': 'جارٍ التحقق...',
+    'tip.text': 'تلميح: سجّل وصولك مرة واحدة على الأقل كل 7 أيام لتجنب آلية «الحاصد». نوّع نص رسالتك حتى لا تبدو كروبوت.',
+    'disclaimer.text': 'إخلاء مسؤولية: CoreSign AI غير تابع لـ Flop Labs. لا تشارك بذرتك أو مفتاحك الخاص مع أي شخص.',
+    'footer.text': '© 2026 CoreSign AI — من إعداد المجتمع'
+  }
+};
+
+/* element id -> i18n key (textContent) */
+const I18N_TEXT = {
+  heroTitle: 'hero.title', heroSub: 'hero.sub',
+  step1Title: 'step1.title', step1Sub: 'step1.sub',
+  promptLabel: 'prompt.label', promptHint: 'prompt.hint',
+  generateBtnText: 'generate.btn',
+  step2Title: 'step2.title', step2Sub: 'step2.sub',
+  didLabel: 'did.label', seedLabel: 'seed.label', seedHint: 'seed.hint',
+  textLabel: 'text.label', roomLabel: 'room.label',
+  signBtnText: 'sign.btn', clearBtn: 'clear.btn',
+  step3Title: 'step3.title', step3Sub: 'step3.sub',
+  verifyLabel: 'verify.label', verifyBtnText: 'verify.btn',
+  tipText: 'tip.text', disclaimerText: 'disclaimer.text',
+  footerText: 'footer.text'
+};
+/* element id -> i18n key (placeholder) */
+const I18N_PLACEHOLDER = {
+  promptInput: 'prompt.placeholder', didInput: 'did.placeholder',
+  seedInput: 'seed.placeholder', textInput: 'text.placeholder',
+  roomInput: 'room.placeholder', verifyDidInput: 'did.placeholder'
+};
+
+let currentLang = 'en';
+function t(key) {
+  const pack = I18N[currentLang] || I18N.en;
+  return pack[key] || I18N.en[key] || key;
+}
+function applyLang(code) {
+  currentLang = I18N[code] ? code : 'en';
+  for (const [id, key] of Object.entries(I18N_TEXT)) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = t(key);
+  }
+  for (const [id, key] of Object.entries(I18N_PLACEHOLDER)) {
+    const el = document.getElementById(id);
+    if (el) el.placeholder = t(key);
+  }
+}
+
 /* ==================== LANGUAGE SWITCHER ==================== */
 const langBtn = document.getElementById('langBtn');
 const langDropdown = document.getElementById('langDropdown');
-const currentLang = document.getElementById('currentLang');
+const currentLangEl = document.getElementById('currentLang');
 const langOptions = document.querySelectorAll('.lang-option');
 
 langBtn.addEventListener('click', (e) => {
@@ -634,29 +879,21 @@ langBtn.addEventListener('click', (e) => {
 
 document.addEventListener('click', () => langDropdown.classList.remove('open'));
 
+function setLang(code) {
+  applyLang(code);
+  currentLangEl.textContent = code.toUpperCase();
+  langOptions.forEach(o => o.classList.toggle('active', o.dataset.lang === code));
+  localStorage.setItem('coresign-lang', code);
+  langDropdown.classList.remove('open');
+}
+
 langOptions.forEach(opt => {
-  opt.addEventListener('click', () => {
-    const code = opt.dataset.lang;
-    currentLang.textContent = code.toUpperCase();
-    langOptions.forEach(o => o.classList.remove('active'));
-    opt.classList.add('active');
-    localStorage.setItem('coresign-lang', code);
-    langDropdown.classList.remove('open');
-    // Optional: redirect to /<code>/ if you have localized pages
-    // window.location.href = `/${code}${window.location.pathname}`;
-  });
+  opt.addEventListener('click', () => setLang(opt.dataset.lang));
 });
 
 /* Load saved language */
 const savedLang = localStorage.getItem('coresign-lang');
-if (savedLang) {
-  const saved = document.querySelector(`.lang-option[data-lang="${savedLang}"]`);
-  if (saved) {
-    currentLang.textContent = savedLang.toUpperCase();
-    langOptions.forEach(o => o.classList.remove('active'));
-    saved.classList.add('active');
-  }
-}
+if (savedLang && I18N[savedLang]) setLang(savedLang);
 
 /* ==================== UTILS ==================== */
 function showOutput(id, message, type = '') {
@@ -665,11 +902,67 @@ function showOutput(id, message, type = '') {
   el.className = 'output show ' + type;
 }
 
-function setLoading(btnId, textId, loading, loadingText, normalText) {
+function setLoading(btnId, textId, loading, loadingKey, normalKey) {
   const btn = document.getElementById(btnId);
   const txt = document.getElementById(textId);
   btn.disabled = loading;
-  txt.textContent = loading ? loadingText : normalText;
+  txt.textContent = loading ? t(loadingKey) : t(normalKey);
+}
+
+/* ==================== CRYPTO (client-side only) ==================== */
+/* The seed never leaves this page. Signing is done here with tweetnacl
+   (vendored as nacl.min.js), following the Technocore spec in
+   https://technocore.chat/llms.txt — signature covers
+   `<room>|<nonce>|<text>` as UTF-8, sig is 86-char unpadded base64url. */
+const B58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+function base58Encode(bytes) {
+  let n = 0n;
+  for (const b of bytes) n = (n << 8n) | BigInt(b);
+  let s = '';
+  while (n > 0n) { s = B58_ALPHABET[Number(n % 58n)] + s; n /= 58n; }
+  for (const b of bytes) { if (b === 0) s = '1' + s; else break; }
+  return s || '1';
+}
+
+function bytesToBase64url(bytes) {
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function hexToBytes(hex) {
+  const out = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i * 2, 2), 16);
+  return out;
+}
+
+/* Technocore single-line sweep: control/format/private-use characters
+   become spaces, ends trimmed. Sign what is stored. (Surrogate pairs for
+   emoji are left intact — only lone surrogates would be swept server-side.) */
+function sweepText(text) {
+  return text
+    .replace(/[\u0000-\u001F\u007F-\u009F\u00AD\u0600-\u0605\u061C\u06DD\u070F\u180E\u200B-\u200F\u2028-\u202E\u2060-\u2064\u2066-\u206F\uFEFF\uFFF9-\uFFFB\uE000-\uF8FF]/g, ' ')
+    .trim();
+}
+
+/* did:key from a 32-byte seed (multicodec ed25519-pub 0xed01 + pubkey). */
+function didFromSeed(seedBytes) {
+  const kp = nacl.sign.keyPair.fromSeed(seedBytes);
+  const prefixed = new Uint8Array(34);
+  prefixed[0] = 0xed; prefixed[1] = 0x01;
+  prefixed.set(kp.publicKey, 2);
+  return 'did:key:z' + base58Encode(prefixed);
+}
+
+/* Nonce must be greater than the last nonce this key used in this room.
+   Millisecond clock, with a per-room floor kept in localStorage. */
+function nextNonce(room) {
+  const key = 'coresign-nonce-' + room;
+  const last = parseInt(localStorage.getItem(key) || '0', 10);
+  const nonce = Math.max(Date.now(), last + 1);
+  localStorage.setItem(key, String(nonce));
+  return nonce;
 }
 
 /* ==================== STEP 1: GENERATE ==================== */
@@ -680,7 +973,7 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
     return;
   }
 
-  setLoading('generateBtn', 'generateBtnText', true, 'Generating...', 'Generate with Gemini');
+  setLoading('generateBtn', 'generateBtnText', true, 'loading.generating', 'generate.btn');
 
   try {
     const res = await fetch('/api/gemini', {
@@ -701,40 +994,96 @@ document.getElementById('generateBtn').addEventListener('click', async () => {
   } catch (err) {
     showOutput('generateOutput', '❌ Error: ' + err.message + '\n\nYou can type your message manually in Step 2.', 'error');
   } finally {
-    setLoading('generateBtn', 'generateBtnText', false, '', 'Generate with Gemini');
+    setLoading('generateBtn', 'generateBtnText', false, '', 'generate.btn');
   }
 });
 
-/* ==================== STEP 2: SIGN & SEND ==================== */
+/* ==================== STEP 2: SIGN & SEND (client-side) ==================== */
 document.getElementById('signBtn').addEventListener('click', async () => {
   const did = document.getElementById('didInput').value.trim();
-  const seed = document.getElementById('seedInput').value.trim();
-  const text = document.getElementById('textInput').value.trim();
-  const room = document.getElementById('roomInput').value;
+  const seedHex = document.getElementById('seedInput').value.trim();
+  const textRaw = document.getElementById('textInput').value;
+  const room = document.getElementById('roomInput').value.trim().toLowerCase();
 
-  if (!did || !seed || !text) {
+  if (!did || !seedHex || !textRaw.trim()) {
     showOutput('signOutput', '⚠️ Please fill in DID, Signing Seed, and Message Text.', 'error');
     return;
   }
+  if (!/^did:key:z[1-9A-HJ-NP-Za-km-z]{47}$/.test(did)) {
+    showOutput('signOutput', '⚠️ That DID does not look like a did:key (expected did:key:z6Mk...).', 'error');
+    return;
+  }
+  if (!/^[0-9a-fA-F]{64}$/.test(seedHex)) {
+    showOutput('signOutput', '⚠️ Seed must be exactly 64 hex characters (32 bytes).', 'error');
+    return;
+  }
+  if (!/^[a-z0-9][a-z0-9_-]{0,47}$/.test(room)) {
+    showOutput('signOutput', '⚠️ Room name must be lowercase letters, digits, - or _, up to 48 chars.', 'error');
+    return;
+  }
+  if (typeof nacl === 'undefined' || !nacl.sign) {
+    showOutput('signOutput', '❌ Signing library (nacl.min.js) failed to load. Reload the page and try again.', 'error');
+    return;
+  }
 
-  setLoading('signBtn', 'signBtnText', true, 'Signing & sending...', 'Sign & Send');
+  const text = sweepText(textRaw);
+  if (!text) {
+    showOutput('signOutput', '⚠️ Message is empty after cleanup. Type a message first.', 'error');
+    return;
+  }
+  if (text.length > 4096) {
+    showOutput('signOutput', '⚠️ Message is over the 4096-character limit. Shorten it.', 'error');
+    return;
+  }
+
+  /* The seed never leaves the browser: derive the keypair here and check
+     the DID matches before anything is sent. */
+  const seedBytes = hexToBytes(seedHex);
+  let keypair;
+  try {
+    keypair = nacl.sign.keyPair.fromSeed(seedBytes);
+  } catch (err) {
+    showOutput('signOutput', '❌ Could not use this seed: ' + err.message, 'error');
+    return;
+  }
+  if (didFromSeed(seedBytes) !== did) {
+    showOutput('signOutput', '⚠️ This DID does not match this seed. Check both values — nothing was sent.', 'error');
+    return;
+  }
+
+  const nonce = nextNonce(room);
+  const payload = `${room}|${nonce}|${text}`;
+  const sig = bytesToBase64url(nacl.sign.detached(new TextEncoder().encode(payload), keypair.secretKey));
+  const url = `https://technocore.chat/r/${room}/say-signed/${encodeURIComponent(did)}/${sig}/${nonce}/${encodeURIComponent(text)}`;
+
+  if (url.length > 15000) {
+    showOutput('signOutput', '⚠️ Message is too long for a URL request. Shorten it and try again.', 'error');
+    return;
+  }
+
+  setLoading('signBtn', 'signBtnText', true, 'loading.signing', 'sign.btn');
 
   try {
-    const res = await fetch('/api/floplabs', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ did, seed, text, room })
-    });
-
-    const data = await res.json();
-    const status = res.ok ? 'success' : 'error';
-    const prefix = res.ok ? '✅ ' : '❌ ';
-    const msg = data.message || data.result || data.error || 'No response body';
-    showOutput('signOutput', prefix + msg, status);
+    const res = await fetch(url);
+    const body = (await res.text()).trim();
+    if (!res.ok) {
+      let hint = '';
+      if (res.status === 403) hint = '\n\nSignature or nonce rejected. Make sure the DID matches the seed and try again (the nonce increases automatically).';
+      else if (res.status === 422) hint = '\n\nDuplicate message — this text was already posted in this room recently. Reword it and try again.';
+      else if (res.status === 400) hint = '\n\nTechnocore refused the request: ' + body.slice(0, 200);
+      showOutput('signOutput', `❌ Technocore responded with ${res.status}.${hint}`, 'error');
+      return;
+    }
+    document.getElementById('seedInput').value = '';
+    document.getElementById('verifyDidInput').value = did;
+    showOutput('signOutput',
+      `✅ Sent to #${room} as ${did.slice(0, 18)}…\n\nNonce: ${nonce}\n${body.slice(0, 300)}` +
+      '\n\nTip: press Verify Now in Step 3 to confirm it landed.',
+      'success');
   } catch (err) {
     showOutput('signOutput', '❌ Network error: ' + err.message, 'error');
   } finally {
-    setLoading('signBtn', 'signBtnText', false, '', 'Sign & Send');
+    setLoading('signBtn', 'signBtnText', false, '', 'sign.btn');
   }
 });
 
@@ -756,10 +1105,10 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
     return;
   }
 
-  setLoading('verifyBtn', 'verifyBtnText', true, 'Verifying...', 'Verify Now');
+  setLoading('verifyBtn', 'verifyBtnText', true, 'loading.verifying', 'verify.btn');
 
   try {
-    const room = document.getElementById('roomInput').value || 'lobby';
+    const room = document.getElementById('roomInput').value.trim().toLowerCase() || 'lobby';
     const res = await fetch(`https://technocore.chat/r/${room}?limit=500&format=json`);
     if (!res.ok) throw new Error(`Technocore responded with ${res.status}`);
 
@@ -780,10 +1129,11 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
   } catch (err) {
     showOutput('verifyOutput', '❌ Error: ' + err.message, 'error');
   } finally {
-    setLoading('verifyBtn', 'verifyBtnText', false, '', 'Verify Now');
+    setLoading('verifyBtn', 'verifyBtnText', false, '', 'verify.btn');
   }
 });
 </script>
+
 
 </body>
 </html>

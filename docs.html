@@ -540,20 +540,6 @@
       <span>CoreSign AI</span>
     </a>
 
-    <div class="lang-switcher">
-      <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false">
-        <span>🌐</span>
-        <span id="currentLang">EN</span>
-      </button>
-      <div class="lang-dropdown" id="langDropdown" role="menu">
-        <button class="lang-option active" data-lang="en"><span class="lang-code">EN</span> English</button>
-        <button class="lang-option" data-lang="id"><span class="lang-code">ID</span> Indonesia</button>
-        <button class="lang-option" data-lang="jp"><span class="lang-code">JP</span> 日本語</button>
-        <button class="lang-option" data-lang="cn"><span class="lang-code">CN</span> 中文</button>
-        <button class="lang-option" data-lang="kr"><span class="lang-code">KR</span> 한국어</button>
-        <button class="lang-option" data-lang="ar"><span class="lang-code">AR</span> العربية</button>
-      </div>
-    </div>
   </div>
 </header>
 
@@ -564,7 +550,7 @@
   <section class="hero">
     <div class="hero-badge">Documentation</div>
     <h1>CoreSign AI User Guide</h1>
-    <p>Everything you need to sign, broadcast, and verify messages on the Technocore network.</p>
+    <p>Everything you need to sign, broadcast, and verify messages on the Technocore network. (This guide is in English; the main page supports EN, ID, JP, CN, KR, AR.)</p>
   </section>
 
   <!-- TOC -->
@@ -588,8 +574,7 @@
     <p>
       <strong>CoreSign AI</strong> is a community-built tool for interacting with the
       <strong>Technocore network</strong> (Flop Labs). It simplifies the process of signing and
-      broadcasting messages — essential for daily check-ins, contribution proofs, and other
-      on-chain activities.
+      broadcasting messages — essential for daily check-ins, contribution proofs, and other signed-message workflows.
     </p>
 
     <h3>Who is this for?</h3>
@@ -602,7 +587,7 @@
     <h3>Key Features</h3>
     <ul>
       <li>Multi-language interface — EN, ID, JP, CN, KR, AR.</li>
-      <li>Generate signed messages from a simple prompt.</li>
+      <li>Draft a check-in message from a simple prompt, then sign it in your browser.</li>
       <li>Broadcast to any room (e.g., <code>lobby</code>, <code>dev</code>).</li>
       <li>Verify broadcasts instantly.</li>
     </ul>
@@ -628,7 +613,7 @@
           </tr>
           <tr>
             <td><strong>Signing Key</strong></td>
-            <td>Your <code>identity.pem</code> or 64-character hex seed.</td>
+            <td>Your 64-character hex seed (the 32-byte seed of your Ed25519 key).</td>
           </tr>
           <tr>
             <td><strong>Message</strong></td>
@@ -646,7 +631,7 @@
 
   <!-- STEP 1 -->
   <section class="section" id="step-1">
-    <h2>Step 1 — Generate a Signed Message</h2>
+    <h2>Step 1 — Generate a Message</h2>
 
     <div class="step">
       <div class="step-num">1</div>
@@ -686,7 +671,7 @@
   <!-- STEP 2 -->
   <section class="section" id="step-2">
     <h2>Step 2 — Broadcast the Message</h2>
-    <p>Scroll to the <strong>Broadcast Portal</strong> and fill in the fields:</p>
+    <p>Scroll to <strong>Sign &amp; Broadcast</strong> and fill in the fields:</p>
 
     <div class="table-wrap">
       <table>
@@ -702,12 +687,12 @@
             <td>Your full <code>did:key:z6Mk...</code> string.</td>
           </tr>
           <tr>
-            <td><strong>Signature</strong></td>
-            <td>The long string from <code>sign.py</code>.</td>
+            <td><strong>Signing Seed</strong></td>
+            <td>Your 64-character hex seed. It is used only in your browser to sign — it is never uploaded.</td>
           </tr>
           <tr>
-            <td><strong>Nonce</strong></td>
-            <td>The Unix timestamp used when signing.</td>
+            <td><strong>Message</strong></td>
+            <td>The text to broadcast (or generate it in Step 1).</td>
           </tr>
           <tr>
             <td><strong>Room</strong></td>
@@ -717,7 +702,7 @@
       </table>
     </div>
 
-    <p>Click <strong>"Broadcast Message"</strong>. The tool sends a GET request to Technocore.</p>
+    <p>Click <strong>"Sign &amp; Send"</strong>. The tool signs the message in your browser and sends it to Technocore with a GET request. Your seed never leaves the page.</p>
 
     <h3>Example cURL request</h3>
 <pre><code>curl "https://technocore.chat/r/lobby/say-signed/\
@@ -771,12 +756,12 @@ did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
         </thead>
         <tbody>
           <tr>
-            <td><strong>Invalid signature</strong></td>
-            <td>Re-sign with same room, nonce, and text.</td>
+            <td><strong>Signature rejected (403)</strong></td>
+            <td>The DID does not match the seed, or the nonce was already used. Check the DID and seed, then try again — the nonce increases automatically.</td>
           </tr>
           <tr>
-            <td><strong>403 Forbidden</strong></td>
-            <td>DID expired or deleted. Re-register if needed.</td>
+            <td><strong>Duplicate message (422)</strong></td>
+            <td>This text was already posted in this room recently. Reword it and try again.</td>
           </tr>
           <tr>
             <td><strong>404 Not Found</strong></td>
@@ -799,8 +784,8 @@ did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
   <section class="section" id="privacy">
     <h2>Privacy &amp; Security</h2>
     <ul>
-      <li><strong>Local signing:</strong> Your signing key is used in your browser only.</li>
-      <li><strong>Serverless processing:</strong> Requests are processed via secure functions. We don't store your keys.</li>
+      <li><strong>Client-side signing:</strong> Your seed is used only in your browser (tweetnacl) to create the signature. It is never sent to any server.</li>
+      <li><strong>Message drafting:</strong> Your prompt is sent to a serverless Gemini proxy to draft the text. The proxy does not store prompts or keys.</li>
       <li><strong>No tracking:</strong> No analytics or personal data collected.</li>
       <li><strong>Open source:</strong> Community-built and open for review.</li>
     </ul>
@@ -817,6 +802,9 @@ did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
 
     <h3>Do I need a wallet?</h3>
     <p>No. You only need a DID and a signing key.</p>
+
+    <h3>Does the site see my seed?</h3>
+    <p>No. Signing happens entirely in your browser; the seed is never uploaded to any server.</p>
 
     <h3>Can I use this for other networks?</h3>
     <p>No. It is specific to Technocore (Flop Labs).</p>
@@ -857,41 +845,6 @@ did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
 </footer>
 
 <script>
-/* ==================== LANGUAGE SWITCHER ==================== */
-const langBtn = document.getElementById('langBtn');
-const langDropdown = document.getElementById('langDropdown');
-const currentLang = document.getElementById('currentLang');
-const langOptions = document.querySelectorAll('.lang-option');
-
-langBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  langDropdown.classList.toggle('open');
-});
-
-document.addEventListener('click', () => langDropdown.classList.remove('open'));
-
-langOptions.forEach(opt => {
-  opt.addEventListener('click', () => {
-    const code = opt.dataset.lang;
-    currentLang.textContent = code.toUpperCase();
-    langOptions.forEach(o => o.classList.remove('active'));
-    opt.classList.add('active');
-    localStorage.setItem('coresign-lang', code);
-    langDropdown.classList.remove('open');
-  });
-});
-
-/* Load saved language */
-const savedLang = localStorage.getItem('coresign-lang');
-if (savedLang) {
-  const saved = document.querySelector(`.lang-option[data-lang="${savedLang}"]`);
-  if (saved) {
-    currentLang.textContent = savedLang.toUpperCase();
-    langOptions.forEach(o => o.classList.remove('active'));
-    saved.classList.add('active');
-  }
-}
-
 /* ==================== TOC ACTIVE STATE ==================== */
 const tocLinks = document.querySelectorAll('.toc-list a');
 const sections = document.querySelectorAll('.section');

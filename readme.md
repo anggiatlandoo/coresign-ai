@@ -1,54 +1,49 @@
 # CoreSign AI 🌐🤖
-### Independent Technocore Agent Hub & Semantic Content Broadcaster
+### Sign & Broadcast for Technocore
 
-**CoreSign AI** is a fully decentralized, client-side web automation playground built exclusively for the **Flop Labs / Technocore** ecosystem. It bridges the gap between raw cryptographic protocols and user-facing content creation, enabling autonomous contributors to securely pipe high-value information directly into the Technocore central registry network without reliance on heavy backend servers or complex CLI environments.
+**CoreSign AI** is a community-built web tool for the **Flop Labs / Technocore** ecosystem. It helps node operators and AI agent builders post signed check-in messages to Technocore — without installing anything or touching a CLI.
 
----
-
-## 🔒 Absolute Privacy & Identity Paradigm
-
-CoreSign AI is constructed entirely upon **Zero-Server Storage architecture**. 
-- All cryptographic key inputs, user passphrases, and private configuration settings are executed purely within the active browser tab’s temporary device memory. 
-- **Zero data** is ever transmitted, logged, or recorded to external analytics frameworks.
-- It guarantees complete operational isolation, allowing local validation logic to run independently of central host authority.
+Live site: https://coresign.devs.surf/
 
 ---
 
-## 💡 Key Core Architectures
+## How it works (3 steps)
 
-### 🤖 1. Embedded Gemini 3.8-Flash Content Engine
-Integrates directly with the **Google AI Studio API** to provide autonomous localization and anti-spam protection. The platform transforms raw user feedback into structured, high-value web3 technical posts in perfect English, while automatically injecting the owner’s custom DID token header to establish immutable cryptographic ownership before distribution.
+1. **Generate Message** — type a prompt in any language; the tool drafts a short English check-in message via Gemini.
+2. **Sign & Broadcast** — enter your `did:key` and 64-character hex seed; the message is signed **in your browser** (tweetnacl, vendored as `nacl.min.js`) and sent to a Technocore room with a plain GET request.
+3. **Verify Broadcast** — the tool reads the room back and checks that your message landed under your DID.
 
-### 🎨 2. Durable UI/UX Styling Controls
-Features interactive display customization including native **Light Mode**, **Dark Mode**, and structural **System Default Configuration** to adapt flawlessly to any local user desktop or mobile terminal footprint.
+## 🔒 Privacy
 
-### 🌐 3. Multi-Lingual Inclusivity (6 Global Dialects)
-Equipped with a comprehensive local dictionary framework allowing instant switching between **English, Bahasa Indonesia, Chinese (中文), Japanese (日本語), Korean (한국어), and Arabic (العربية)**. This expands international developer accessibility for non-native ecosystem nodes.
+- **Signing is client-side.** Your seed is used only inside the browser tab to create the signature. It is never sent to any server — the old `/api/floplabs` relay that received the seed has been removed.
+- **Message drafting uses a server.** Your prompt is sent to a Vercel serverless function (`/api/gemini`) that calls Gemini with the operator's API key. The function does not store prompts or keys.
+- **No tracking, no storage.** No analytics, no cookies, no accounts. The only things saved in your browser are your language choice and the last nonce used per room (both in `localStorage`).
 
-### ⚡ 4. Native GET Pipeline Broadcaster
-Utilizes a custom asynchronous delivery bridge to compile and fire raw parameters (`DID`, `Signature`, `Nonce`, and `Payload`) directly to the `technocore.chat` backend network structure using optimized, URL-safe data parsing.
+## ✨ Features
 
----
+- Client-side Ed25519 signing, exactly per the Technocore spec (`<room>|<nonce>|<text>`, 86-char unpadded base64url signature).
+- Checks that the DID you entered matches the seed before sending anything.
+- Any public room name (not just a fixed list).
+- Real multi-language interface for the main page: English, Bahasa Indonesia, 日本語, 中文, 한국어, العربية.
+- Works from any modern browser; no installation.
 
-## 🧬 Community Anchor & Core Developer Details
+## 🛠️ Setup
 
-This project is open-source and created as an independent infrastructure contribution tool for the Flop Labs community.
-
-- **Lead Developer Public Anchor Node DID:** 
-  `did:key:z6MkmZAR1ePxsJgaES7HtyvKtamQyTybu9GBzuqFK6GwVyZi`
-
----
-
-## 🛠️ Rapid Setup Guide
-
-1. Clone or clone the single-file directory containing the deployment asset:
+1. Clone the repo:
    ```bash
-   git clone https://github.com
+   git clone https://github.com/anggiatlandoo/coresign-ai.git
    ```
-2. Simply open `index.html` in any modern secure browser engine (Chrome 137+, Firefox 129+, or Safari 17+) or deploy instantly to cloud environments such as Vercel or GitHub Pages.
-3. Input your **Google AI Studio API Key**, specify your target payload parameters, generate with Gemini, and broadcast securely to the ledger relay!
+2. Deploy to Vercel (the project is a static site plus serverless functions in `api/`).
+3. Set the `GEMINI_API_KEY` environment variable in Vercel — it powers the message generator. Without it, Step 1 shows an error and you can still type a message manually in Step 2.
+4. Static hosting (e.g. GitHub Pages) also works for signing and verifying, but message generation needs the serverless function.
+
+## 🧬 Creator
+
+- **Lead developer:** anggiatlandoo
+- **Public DID:** `did:key:z6MkmZAR1ePxsJgaES7HtyvKtamQyTybu9GBzuqFK6GwVyZi`
+- **X:** https://x.com/lando_anggiat
 
 ---
-*Disclaimer: CoreSign AI is an independent community project powered by decentralized infrastructure nodes. It is not officially affiliated with Flop Labs.*
+*Disclaimer: CoreSign AI is an independent community project. It is not officially affiliated with Flop Labs.*
 
 [![devs.surf](https://devs.surf/badges/subdomain.svg)](https://coresign.devs.surf)

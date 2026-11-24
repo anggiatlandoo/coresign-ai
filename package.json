@@ -1,7 +1,7 @@
 {
   "name": "coresign-ai",
   "version": "1.0.0",
-  "description": "An independent, decentralized client-side web automation hub for Flop Labs Technocore, featuring integrated Gemini AI and multi-language support.",
+  "description": "Sign and broadcast messages to the Technocore network from your browser. Client-side Ed25519 signing; your seed never leaves the page.",
   "type": "module",
   "main": "index.html",
   "scripts": {
@@ -23,7 +23,7 @@
     "type": "git",
     "url": "https://github.com/anggiatlandoo/coresign-ai.git"
   },
-  "homepage": "https://coresign-ai.vercel.app",
+  "homepage": "https://coresign.devs.surf/",
   "dependencies": {
     "@google/genai": "^1.42.0"
   }
