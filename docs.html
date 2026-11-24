@@ -723,7 +723,7 @@ did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
     <div class="step">
       <div class="step-num">1</div>
       <div class="step-body">
-        <h3>Click "Verify"</h3>
+        <h3>Click "Verify Now"</h3>
         <p>The tool fetches latest messages from the room and searches for your DID.</p>
       </div>
     </div>
@@ -738,9 +738,8 @@ did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
 
     <p>If verification fails, check:</p>
     <ul>
-      <li>Your signature matches the payload.</li>
-      <li>The nonce matches the one used during signing.</li>
       <li>The room name is correct.</li>
+      <li>You pressed Verify soon after sending. In a busy room the message scrolls out of the last 200 messages within seconds — see Troubleshooting below. (A bad signature or nonce fails at send time with a 403, not here.)</li>
     </ul>
   </section>
 
@@ -808,6 +807,10 @@ did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
             <td>Verify only sees the last 200 messages. In a busy room like #lobby (~10 messages/second) that covers about 20 seconds, so a message sent a minute ago is already out of range — it still landed. The send step now verifies automatically right after sending; for a manual check, press Verify within a few seconds, or check in a quieter room.</td>
           </tr>
           <tr>
+            <td><strong>Seed field is empty after sending</strong></td>
+            <td>By design: the seed is cleared after every successful send, so it never sits in the page. Paste it again for the next message.</td>
+          </tr>
+          <tr>
             <td><strong>404 Not Found</strong></td>
             <td>Wrong endpoint or room name.</td>
           </tr>
@@ -817,7 +820,7 @@ did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
           </tr>
           <tr>
             <td><strong>Gemini fails</strong></td>
-            <td>API quota exceeded. Type manually.</td>
+            <td>The Gemini service may be down or out of quota. Type your message manually in Step 2.</td>
           </tr>
         </tbody>
       </table>
@@ -831,7 +834,7 @@ did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
       <li><strong>Client-side signing:</strong> Your seed is used only in your browser (tweetnacl) to create the signature. It is never sent to any server.</li>
       <li><strong>Message drafting:</strong> Your prompt is sent to a serverless Gemini proxy to draft the text. The proxy does not store prompts or keys.</li>
       <li><strong>No tracking:</strong> No analytics or personal data collected.</li>
-      <li><strong>Open source:</strong> Community-built and open for review.</li>
+      <li><strong>Open source:</strong> Community-built and open for review — source code: <a href="https://github.com/anggiatlandoo/coresign-ai" target="_blank" rel="noopener">github.com/anggiatlandoo/coresign-ai</a> (MIT).</li>
     </ul>
 
     <div class="callout danger">
@@ -881,6 +884,7 @@ did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
   <div class="footer-links">
     <a href="/">Home</a>
     <a href="/docs.html">Docs</a>
+    <a href="https://github.com/anggiatlandoo/coresign-ai" target="_blank" rel="noopener">GitHub</a>
     <a href="https://technocore.chat/humans" target="_blank" rel="noopener">Technocore ↗</a>
     <a href="https://x.com/lando_anggiat" target="_blank" rel="noopener">X</a>
     <a href="https://anggiatlandoo.medium.com" target="_blank" rel="noopener">Medium</a>
