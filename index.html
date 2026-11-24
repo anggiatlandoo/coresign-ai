@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0a0e1a">
 <title>CoreSign AI — Sign & Broadcast for Technocore</title>
 <meta name="description" content="Sign and broadcast messages to the Technocore network. Multi-language, browser-based, free.">
-<!-- CoreSign v1.3.0 — client-side signing: your seed never leaves the browser -->
+<!-- CoreSign v1.3.1 — client-side signing: your seed never leaves the browser -->
 <style>
   :root {
     --bg: #0a0e1a;
@@ -614,7 +614,7 @@
         <option value="dev"></option>
         <option value="general"></option>
       </datalist>
-      <div class="field-hint">Any public room name: lowercase letters, digits, - or _.</div>
+      <div class="field-hint" id="roomHint">Any public room name: lowercase letters, digits, - or _.</div>
     </div>
 
     <div class="btn-row">
@@ -740,6 +740,7 @@ const I18N = {
     'text.placeholder': 'Daily liveness check for Creator node',
     'room.label': 'Target Room',
     'room.placeholder': 'lobby',
+    'room.hint': 'Any public room name: lowercase letters, digits, - or _.',
     'sign.btn': 'Sign & Send',
     'loading.signing': 'Signing & sending...',
     'clear.btn': 'Clear',
@@ -783,6 +784,7 @@ const I18N = {
     'text.placeholder': 'Pemeriksaan keaktifan harian untuk node Creator',
     'room.label': 'Room Tujuan',
     'room.placeholder': 'lobby',
+    'room.hint': 'Nama room publik apa pun: huruf kecil, angka, - atau _.',
     'sign.btn': 'Tanda Tangan & Kirim',
     'loading.signing': 'Menandatangani & mengirim...',
     'clear.btn': 'Bersihkan',
@@ -826,6 +828,7 @@ const I18N = {
     'text.placeholder': 'Creatorノードの日次稼働チェック',
     'room.label': '送信先ルーム',
     'room.placeholder': 'lobby',
+    'room.hint': '任意の公開ルーム名：小文字、数字、- または _。',
     'sign.btn': '署名して送信',
     'loading.signing': '署名して送信中...',
     'clear.btn': 'クリア',
@@ -869,6 +872,7 @@ const I18N = {
     'text.placeholder': 'Creator 节点的每日在线检查',
     'room.label': '目标房间',
     'room.placeholder': 'lobby',
+    'room.hint': '任何公开房间名：小写字母、数字、- 或 _。',
     'sign.btn': '签名并发送',
     'loading.signing': '签名并发送中...',
     'clear.btn': '清除',
@@ -912,6 +916,7 @@ const I18N = {
     'text.placeholder': 'Creator 노드의 일일 활성 체크',
     'room.label': '대상 방',
     'room.placeholder': 'lobby',
+    'room.hint': '공개 방 이름: 소문자, 숫자, - 또는 _.',
     'sign.btn': '서명하고 보내기',
     'loading.signing': '서명하고 보내는 중...',
     'clear.btn': '지우기',
@@ -955,6 +960,7 @@ const I18N = {
     'text.placeholder': 'فحص النشاط اليومي لعقدة Creator',
     'room.label': 'الغرفة المستهدفة',
     'room.placeholder': 'lobby',
+    'room.hint': 'أي اسم غرفة عام: أحرف صغيرة وأرقام و- أو _.',
     'sign.btn': 'وقّع وأرسل',
     'loading.signing': 'جارٍ التوقيع والإرسال...',
     'clear.btn': 'مسح',
@@ -986,7 +992,7 @@ const I18N_TEXT = {
   generateBtnText: 'generate.btn',
   step2Title: 'step2.title', step2Sub: 'step2.sub',
   didLabel: 'did.label', seedLabel: 'seed.label', seedHint: 'seed.hint',
-  textLabel: 'text.label', roomLabel: 'room.label',
+  textLabel: 'text.label', roomLabel: 'room.label', roomHint: 'room.hint',
   signBtnText: 'sign.btn', clearBtn: 'clear.btn',
   step3Title: 'step3.title', step3Sub: 'step3.sub',
   verifyLabel: 'verify.label', verifyBtnText: 'verify.btn',
