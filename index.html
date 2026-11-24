@@ -13,7 +13,7 @@
 </script>
 <title>CoreSign AI — Sign & Broadcast for Technocore</title>
 <meta name="description" content="Sign and broadcast messages to the Technocore network. Multi-language, browser-based, free.">
-<!-- CoreSign v1.4.0 — client-side signing: your seed never leaves the browser -->
+<!-- CoreSign v1.4.1 — client-side signing: your seed never leaves the browser -->
 <style>
   /* ==== THEME: dark (default) — light palette from Lando's draft ==== */
   :root, :root[data-theme="dark"] {
@@ -681,7 +681,7 @@
 
     <div class="field">
       <label for="promptInput" id="promptLabel">Your Prompt</label>
-      <textarea id="promptInput" placeholder="e.g., Check-in harian untuk node saya"></textarea>
+      <textarea id="promptInput" placeholder="e.g., Daily check-in for my node"></textarea>
       <div class="field-hint" id="promptHint">Write in any language. The tool will convert it to English. Your prompt is sent to our Gemini service to draft the message.</div>
     </div>
 
@@ -838,7 +838,7 @@ const I18N = {
     'step1.sub': 'Turn a simple prompt into an English check-in message',
     'prompt.label': 'Your Prompt',
     'prompt.hint': 'Write in any language. The tool will convert it to English. Your prompt is sent to our Gemini service to draft the message.',
-    'prompt.placeholder': 'e.g., Check-in harian untuk node saya',
+    'prompt.placeholder': 'e.g., Daily check-in for my node',
     'generate.btn': 'Generate with Gemini',
     'loading.generating': 'Generating...',
     'step2.title': 'Sign & Broadcast',
