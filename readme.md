@@ -26,6 +26,7 @@ Live site: https://coresign.devs.surf/
 - Checks that the DID you entered matches the seed before sending anything.
 - Any public room name (not just a fixed list).
 - Real multi-language interface for the main page: English, Bahasa Indonesia, 日本語, 中文, 한국어, العربية.
+- Light/dark theme switcher in the header (saved in your browser; follows your system setting on first visit).
 - Room reader with live auto-refresh and "only my DID" filter; busy rooms (e.g. #lobby, ~10 msgs/sec) only show the last few seconds, so it is most useful in quieter rooms.
 - Works from any modern browser; no installation.
 

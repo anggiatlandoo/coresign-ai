@@ -1,13 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0a0e1a">
+<script>
+  /* Apply the saved theme before first paint (no flash). Key: 'coresign-theme'. */
+  try {
+    var _t = localStorage.getItem('coresign-theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', _t);
+  } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+</script>
 <title>CoreSign AI — User Guide</title>
 <meta name="description" content="Complete user guide for CoreSign AI — sign and broadcast messages to the Technocore network.">
 <style>
-  :root {
+  /* ==== THEME: dark (default) — light palette from Lando's draft ==== */
+  :root, :root[data-theme="dark"] {
     --bg: #0a0e1a;
     --bg-2: #111827;
     --bg-3: #1a2332;
@@ -24,6 +32,34 @@
     --warning: #f59e0b;
     --danger: #ef4444;
     --code: #0d1117;
+    --header-bg: rgba(10, 14, 26, 0.95);
+    --callout-note-text: #bfdbfe;
+    --callout-warning-text: #fde68a;
+    --callout-danger-text: #fecaca;
+    --mono: "SF Mono", Monaco, "Roboto Mono", Consolas, monospace;
+  }
+
+  :root[data-theme="light"] {
+    --bg: #f8fafc;
+    --bg-2: #f1f5f9;
+    --bg-3: #e2e8f0;
+    --card: #ffffff;
+    --border: #cbd5e1;
+    --border-hi: #94a3b8;
+    --text: #0f172a;
+    --text-2: #475569;
+    --muted: #64748b;
+    --accent: #2563eb;
+    --accent-hi: #1d4ed8;
+    --cyan: #0891b2;
+    --success: #059669;
+    --warning: #d97706;
+    --danger: #dc2626;
+    --code: #f1f5f9;
+    --header-bg: rgba(248, 250, 252, 0.95);
+    --callout-note-text: #1e40af;
+    --callout-warning-text: #92400e;
+    --callout-danger-text: #991b1b;
     --mono: "SF Mono", Monaco, "Roboto Mono", Consolas, monospace;
   }
 
@@ -43,6 +79,7 @@
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
     -webkit-text-size-adjust: 100%;
+    transition: background 0.3s, color 0.3s;
   }
 
   /* ============ HEADER ============ */
@@ -50,7 +87,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(10, 14, 26, 0.95);
+    background: var(--header-bg);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
   }
@@ -128,6 +165,26 @@
   }
   .main-nav a:hover { color: var(--text); background: var(--bg-3); }
   .main-nav a.active { color: var(--accent); }
+
+  /* ============ HEADER ACTIONS (theme) ============ */
+  .header-actions { display: flex; align-items: center; gap: 8px; }
+
+  .theme-btn {
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+  .theme-btn:hover { border-color: var(--accent); }
 
   /* ============ LANGUAGE SWITCHER ============ */
   .lang-switcher { position: relative; }
@@ -234,7 +291,7 @@
     font-weight: 800;
     line-height: 1.25;
     margin-bottom: 12px;
-    background: linear-gradient(135deg, #fff 0%, #9ca3af 100%);
+    background: linear-gradient(135deg, var(--text) 0%, var(--text-2) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -423,19 +480,19 @@
   .callout.note {
     background: rgba(59, 130, 246, 0.08);
     border-color: rgba(59, 130, 246, 0.25);
-    color: #bfdbfe;
+    color: var(--callout-note-text);
   }
 
   .callout.warning {
     background: rgba(245, 158, 11, 0.08);
     border-color: rgba(245, 158, 11, 0.25);
-    color: #fde68a;
+    color: var(--callout-warning-text);
   }
 
   .callout.danger {
     background: rgba(239, 68, 68, 0.08);
     border-color: rgba(239, 68, 68, 0.25);
-    color: #fecaca;
+    color: var(--callout-danger-text);
   }
 
   /* ============ STEP ============ */
@@ -589,6 +646,10 @@
       <a href="https://github.com/anggiatlandoo/coresign-ai" target="_blank" rel="noopener">GitHub</a>
       <a href="https://technocore.chat/humans" target="_blank" rel="noopener">Technocore ↗</a>
     </nav>
+
+    <div class="header-actions">
+      <button class="theme-btn" id="themeToggle" title="Toggle theme">☀️</button>
+    </div>
 
   </div>
 </header>
@@ -912,6 +973,9 @@ did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
     <h3>Is this free?</h3>
     <p>Yes — completely free.</p>
 
+    <h3>Is there a light theme?</h3>
+    <p>Yes. Use the ☀️ / 🌙 button in the header to switch between dark and light. Your choice is saved in your browser, and the first visit follows your system setting.</p>
+
     <h3>Where can I get help?</h3>
     <p>Reach out to the creator directly or follow for updates:</p>
 
@@ -943,6 +1007,24 @@ did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
 </footer>
 
 <script>
+/* ==================== THEME (light/dark) ==================== */
+/* The <head> snippet already applied the saved (or system) theme before
+   first paint; this only wires the toggle button and keeps its icon +
+   theme-color in sync. The icon shows the theme you switch TO. */
+const themeToggle = document.getElementById('themeToggle');
+const themeMeta = document.querySelector('meta[name="theme-color"]');
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  try { localStorage.setItem('coresign-theme', theme); } catch (e) {}
+  themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+  if (themeMeta) themeMeta.setAttribute('content', theme === 'dark' ? '#0a0e1a' : '#f8fafc');
+}
+themeToggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+});
+applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+
 /* ==================== TOC ACTIVE STATE ==================== */
 const tocLinks = document.querySelectorAll('.toc-list a');
 const sections = document.querySelectorAll('.section');
