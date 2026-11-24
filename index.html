@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0a0e1a">
 <title>CoreSign AI — Sign & Broadcast for Technocore</title>
 <meta name="description" content="Sign and broadcast messages to the Technocore network. Multi-language, browser-based, free.">
-<!-- CoreSign v1.1.1 — client-side signing: your seed never leaves the browser -->
+<!-- CoreSign v1.2.0 — client-side signing: your seed never leaves the browser -->
 <style>
   :root {
     --bg: #0a0e1a;
@@ -373,6 +373,21 @@
   .output.success { border-color: rgba(16, 185, 129, 0.4); }
   .output.error { border-color: rgba(239, 68, 68, 0.4); }
 
+  /* ============ ROOM READER (STEP 4) ============ */
+  .check-row { display: flex; gap: 18px; flex-wrap: wrap; }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text); cursor: pointer; }
+  .check input { width: auto; accent-color: var(--accent); }
+  .reader-meta { font-size: 12px; color: var(--muted); margin-top: 12px; display: none; }
+  .reader-meta.show { display: block; }
+  .reader-list { margin-top: 10px; display: none; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto; }
+  .reader-list.show { display: flex; }
+  .reader-msg { background: var(--code); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 13.5px; line-height: 1.5; }
+  .reader-msg.mine { border-color: rgba(16, 185, 129, 0.45); }
+  .reader-head { display: flex; gap: 8px; align-items: baseline; font-size: 12px; color: var(--muted); margin-bottom: 3px; flex-wrap: wrap; }
+  .reader-did { font-family: var(--mono); color: var(--accent); word-break: break-all; }
+  .reader-time { margin-left: auto; white-space: nowrap; }
+  .reader-text { word-break: break-word; overflow-wrap: anywhere; }
+
   .output-label {
     font-size: 11px;
     text-transform: uppercase;
@@ -594,6 +609,39 @@
     <div class="output" id="verifyOutput"></div>
   </section>
 
+  <!-- STEP 4: READ ROOM -->
+  <section class="card">
+    <div class="card-head">
+      <div class="card-num">4</div>
+      <div>
+        <div class="card-title" id="step4Title">Read Room</div>
+        <div class="card-sub" id="step4Sub">Follow the latest messages in a room — no signing needed</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="readRoomInput" id="readRoomLabel">Room to Read</label>
+      <input type="text" id="readRoomInput" placeholder="lobby" list="roomList">
+      <div class="field-hint" id="readRoomHint">Empty = use the room from Step 2.</div>
+    </div>
+
+    <div class="field check-row">
+      <label class="check"><input type="checkbox" id="readMineOnly"> <span id="readMineLabel">Only my DID</span></label>
+      <label class="check"><input type="checkbox" id="readAuto"> <span id="readAutoLabel">Auto-refresh</span></label>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="readBtn">
+        <span id="readBtnText">Load Messages</span>
+      </button>
+      <button class="btn btn-secondary" id="readStopBtn">Stop</button>
+    </div>
+
+    <div class="reader-meta" id="readMeta"></div>
+    <div class="reader-list" id="readList"></div>
+    <div class="output" id="readOutput"></div>
+  </section>
+
   <!-- INFO -->
   <div class="callout note">
     <span class="callout-icon">💡</span>
@@ -656,6 +704,15 @@ const I18N = {
     'verify.label': 'DID to Verify',
     'verify.btn': 'Verify Now',
     'loading.verifying': 'Verifying...',
+    'step4.title': 'Read Room',
+    'step4.sub': 'Follow the latest messages in a room — no signing needed',
+    'read.room.label': 'Room to Read',
+    'read.room.hint': 'Empty = use the room from Step 2.',
+    'read.mine': 'Only my DID',
+    'read.auto': 'Auto-refresh',
+    'read.btn': 'Load Messages',
+    'read.stop': 'Stop',
+    'loading.reading': 'Loading...',
     'tip.text': 'Tip: Check in at least once every 7 days to avoid the "reaper" mechanism. Vary your message text to avoid looking like a bot.',
     'disclaimer.text': 'Disclaimer: CoreSign AI is not affiliated with Flop Labs. Never share your seed or private key with anyone.',
     'footer.text': '© 2026 CoreSign AI — Community-built.'
@@ -689,6 +746,15 @@ const I18N = {
     'verify.label': 'DID untuk Diverifikasi',
     'verify.btn': 'Verifikasi Sekarang',
     'loading.verifying': 'Memverifikasi...',
+    'step4.title': 'Baca Room',
+    'step4.sub': 'Ikuti pesan terbaru di sebuah room — tanpa perlu tanda tangan',
+    'read.room.label': 'Room yang Dibaca',
+    'read.room.hint': 'Kosong = pakai room dari Langkah 2.',
+    'read.mine': 'Hanya DID saya',
+    'read.auto': 'Refresh otomatis',
+    'read.btn': 'Muat Pesan',
+    'read.stop': 'Berhenti',
+    'loading.reading': 'Memuat...',
     'tip.text': 'Tips: Check-in minimal sekali setiap 7 hari agar terhindar dari mekanisme "reaper". Variasikan teks pesan Anda agar tidak terlihat seperti bot.',
     'disclaimer.text': 'Penafian: CoreSign AI tidak berafiliasi dengan Flop Labs. Jangan pernah membagikan seed atau private key Anda kepada siapa pun.',
     'footer.text': '© 2026 CoreSign AI — Dibangun komunitas.'
@@ -722,6 +788,15 @@ const I18N = {
     'verify.label': '確認するDID',
     'verify.btn': '今すぐ確認',
     'loading.verifying': '確認中...',
+    'step4.title': 'ルームを読む',
+    'step4.sub': 'ルームの最新メッセージをフォロー — 署名は不要です',
+    'read.room.label': '読むルーム',
+    'read.room.hint': '空欄 = ステップ2のルームを使います。',
+    'read.mine': '自分のDIDのみ',
+    'read.auto': '自動更新',
+    'read.btn': 'メッセージを読み込む',
+    'read.stop': '停止',
+    'loading.reading': '読み込み中...',
     'tip.text': 'ヒント：「reaper」を避けるため、7日に1回以上チェックインしてください。ボットに見えないよう、メッセージを変えてください。',
     'disclaimer.text': '免責事項：CoreSign AIはFlop Labsとは関係ありません。シードや秘密鍵を他人と共有しないでください。',
     'footer.text': '© 2026 CoreSign AI — コミュニティ製'
@@ -755,6 +830,15 @@ const I18N = {
     'verify.label': '要验证的 DID',
     'verify.btn': '立即验证',
     'loading.verifying': '验证中...',
+    'step4.title': '阅读房间',
+    'step4.sub': '关注房间中的最新消息——无需签名',
+    'read.room.label': '要阅读的房间',
+    'read.room.hint': '留空则使用第 2 步中的房间。',
+    'read.mine': '仅我的 DID',
+    'read.auto': '自动刷新',
+    'read.btn': '加载消息',
+    'read.stop': '停止',
+    'loading.reading': '加载中...',
     'tip.text': '提示：请至少每 7 天签到一次，以避免触发“收割者”机制。请变换消息内容，以免看起来像机器人。',
     'disclaimer.text': '免责声明：CoreSign AI 与 Flop Labs 无关。请勿与任何人分享您的种子或私钥。',
     'footer.text': '© 2026 CoreSign AI — 社区开发'
@@ -788,6 +872,15 @@ const I18N = {
     'verify.label': '확인할 DID',
     'verify.btn': '지금 확인',
     'loading.verifying': '확인 중...',
+    'step4.title': '방 읽기',
+    'step4.sub': '방의 최신 메시지를 확인하세요 — 서명이 필요 없습니다',
+    'read.room.label': '읽을 방',
+    'read.room.hint': '비워 두면 2단계의 방을 사용합니다.',
+    'read.mine': '내 DID만',
+    'read.auto': '자동 새로고침',
+    'read.btn': '메시지 불러오기',
+    'read.stop': '중지',
+    'loading.reading': '불러오는 중...',
     "tip.text": "팁: '리퍼'를 피하려면 최소 7일에 한 번씩 체크인하세요. 봇으로 보이지 않도록 메시지 내용을 바꾸세요.",
     'disclaimer.text': '면책 조항: CoreSign AI는 Flop Labs와 관련이 없습니다. 시드나 개인 키를 누구와도 공유하지 마세요.',
     'footer.text': '© 2026 CoreSign AI — 커뮤니티 제작'
@@ -821,6 +914,15 @@ const I18N = {
     'verify.label': 'DID المراد التحقق منه',
     'verify.btn': 'تحقق الآن',
     'loading.verifying': 'جارٍ التحقق...',
+    'step4.title': 'قراءة الغرفة',
+    'step4.sub': 'تابع أحدث الرسائل في الغرفة — دون الحاجة إلى توقيع',
+    'read.room.label': 'الغرفة المراد قراءتها',
+    'read.room.hint': 'فارغ = استخدم الغرفة من الخطوة 2.',
+    'read.mine': 'DID الخاص بي فقط',
+    'read.auto': 'تحديث تلقائي',
+    'read.btn': 'تحميل الرسائل',
+    'read.stop': 'إيقاف',
+    'loading.reading': 'جارٍ التحميل...',
     'tip.text': 'تلميح: سجّل وصولك مرة واحدة على الأقل كل 7 أيام لتجنب آلية «الحاصد». نوّع نص رسالتك حتى لا تبدو كروبوت.',
     'disclaimer.text': 'إخلاء مسؤولية: CoreSign AI غير تابع لـ Flop Labs. لا تشارك بذرتك أو مفتاحك الخاص مع أي شخص.',
     'footer.text': '© 2026 CoreSign AI — من إعداد المجتمع'
@@ -839,6 +941,10 @@ const I18N_TEXT = {
   signBtnText: 'sign.btn', clearBtn: 'clear.btn',
   step3Title: 'step3.title', step3Sub: 'step3.sub',
   verifyLabel: 'verify.label', verifyBtnText: 'verify.btn',
+  step4Title: 'step4.title', step4Sub: 'step4.sub',
+  readRoomLabel: 'read.room.label', readRoomHint: 'read.room.hint',
+  readMineLabel: 'read.mine', readAutoLabel: 'read.auto',
+  readBtnText: 'read.btn', readStopBtn: 'read.stop',
   tipText: 'tip.text', disclaimerText: 'disclaimer.text',
   footerText: 'footer.text'
 };
@@ -846,7 +952,8 @@ const I18N_TEXT = {
 const I18N_PLACEHOLDER = {
   promptInput: 'prompt.placeholder', didInput: 'did.placeholder',
   seedInput: 'seed.placeholder', textInput: 'text.placeholder',
-  roomInput: 'room.placeholder', verifyDidInput: 'did.placeholder'
+  roomInput: 'room.placeholder', verifyDidInput: 'did.placeholder',
+  readRoomInput: 'room.placeholder'
 };
 
 let currentLang = 'en';
@@ -1162,6 +1269,170 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
       'error');
   }
   setLoading('verifyBtn', 'verifyBtnText', false, '', 'verify.btn');
+});
+
+/* ==================== STEP 4: READ ROOM ==================== */
+/* Read-only: no key, no signing, no seed. Room lines are written by
+   strangers, so every message is rendered with textContent only — never
+   innerHTML — so a crafted message cannot inject markup or scripts. */
+const readState = { room: '', lastSeq: 0, autoGen: 0, abort: null };
+
+function readRoomName() {
+  return document.getElementById('readRoomInput').value.trim().toLowerCase()
+    || document.getElementById('roomInput').value.trim().toLowerCase()
+    || 'lobby';
+}
+
+function readMineKey() {
+  return (document.getElementById('didInput').value.trim()
+    || document.getElementById('verifyDidInput').value.trim()).replace('did:key:', '');
+}
+
+function shortDid(from) {
+  const key = (from || '').replace('did:key:', '');
+  return key.length > 12 ? key.slice(0, 4) + '…' + key.slice(-4) : key;
+}
+
+function renderReaderMessage(m, mine) {
+  const wrap = document.createElement('div');
+  wrap.className = 'reader-msg' + (mine ? ' mine' : '');
+  wrap.dataset.seq = m.seq;
+  const head = document.createElement('div');
+  head.className = 'reader-head';
+  const didEl = document.createElement('span');
+  didEl.className = 'reader-did';
+  didEl.textContent = shortDid(m.from);
+  const seqEl = document.createElement('span');
+  seqEl.textContent = '#' + m.seq;
+  const timeEl = document.createElement('span');
+  timeEl.className = 'reader-time';
+  timeEl.textContent = m.ts ? new Date(m.ts).toLocaleString() : '';
+  head.append(didEl, seqEl, timeEl);
+  const textEl = document.createElement('div');
+  textEl.className = 'reader-text';
+  textEl.textContent = m.text || '';
+  wrap.append(head, textEl);
+  return wrap;
+}
+
+function readerFilter(m) {
+  if (!document.getElementById('readMineOnly').checked) return true;
+  const key = readMineKey();
+  if (!key) return true; /* no DID entered yet — show everything */
+  return (m.from || '').includes(key);
+}
+
+function updateReaderMeta(room, shown) {
+  const meta = document.getElementById('readMeta');
+  meta.textContent = `Showing ${shown} message${shown === 1 ? '' : 's'} · #${room} · updated ${new Date().toLocaleTimeString()}`;
+  meta.classList.add('show');
+}
+
+function renderReaderList(messages) {
+  const list = document.getElementById('readList');
+  list.innerHTML = '';
+  /* Newest first; the server returns oldest-first, so reverse. */
+  messages.slice().reverse().forEach(m => {
+    const mineKey = readMineKey();
+    list.append(renderReaderMessage(m, !!mineKey && (m.from || '').includes(mineKey)));
+  });
+  list.classList.add('show');
+}
+
+async function fetchRoomMessages(room, since, signal) {
+  /* since + wait=10 long-polls: holds up to 10s in a quiet room, returns
+     at once when a message lands. Initial load takes the last 50. */
+  const q = since ? `?since=${since}&wait=10&limit=200&format=json` : `?limit=50&format=json`;
+  const res = await fetch(`https://technocore.chat/r/${room}${q}`, { signal });
+  if (!res.ok) throw new Error(`Technocore responded with ${res.status}`);
+  const data = await res.json();
+  return data.messages || [];
+}
+
+function stopReaderAuto() {
+  readState.autoGen++;
+  if (readState.abort) { readState.abort.abort(); readState.abort = null; }
+}
+
+async function startReaderAuto() {
+  const gen = ++readState.autoGen;
+  while (readState.autoGen === gen) {
+    readState.abort = new AbortController();
+    try {
+      const msgs = await fetchRoomMessages(readState.room, readState.lastSeq, readState.abort.signal);
+      if (readState.autoGen !== gen) return;
+      const fresh = msgs.filter(m => m.seq > readState.lastSeq);
+      if (fresh.length) {
+        readState.lastSeq = msgs[msgs.length - 1].seq;
+        const list = document.getElementById('readList');
+        const shown = fresh.filter(readerFilter);
+        /* Prepend newest first, cap the list at 50. */
+        shown.slice().reverse().forEach(m => {
+          const mineKey = readMineKey();
+          list.prepend(renderReaderMessage(m, !!mineKey && (m.from || '').includes(mineKey)));
+        });
+        while (list.children.length > 50) list.removeChild(list.lastChild);
+        updateReaderMeta(readState.room, list.children.length);
+      }
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      /* Transient network error: wait a little, then retry. */
+      await new Promise(r => setTimeout(r, 3000));
+      if (readState.autoGen !== gen) return;
+      continue;
+    }
+    /* Don't hammer a busy room: at most one poll every ~2s. */
+    await new Promise(r => setTimeout(r, 2000));
+    if (readState.autoGen !== gen) return;
+  }
+}
+
+async function loadReader() {
+  const room = readRoomName();
+  if (!/^[a-z0-9][a-z0-9_-]{0,47}$/.test(room)) {
+    showOutput('readOutput', '⚠️ Room name must be lowercase letters, digits, - or _, up to 48 chars.', 'error');
+    return;
+  }
+  if (document.getElementById('readMineOnly').checked && !readMineKey()) {
+    showOutput('readOutput', '⚠️ "Only my DID" needs your DID — enter it in Step 2 first.', 'error');
+    return;
+  }
+  const wasAuto = document.getElementById('readAuto').checked;
+  stopReaderAuto();
+  readState.room = room;
+  readState.lastSeq = 0;
+  setLoading('readBtn', 'readBtnText', true, 'loading.reading', 'read.btn');
+  try {
+    const msgs = await fetchRoomMessages(room, 0);
+    const shown = msgs.filter(readerFilter);
+    if (msgs.length) readState.lastSeq = msgs[msgs.length - 1].seq;
+    renderReaderList(shown);
+    updateReaderMeta(room, shown.length);
+    document.getElementById('readOutput').className = 'output';
+    if (!msgs.length) showOutput('readOutput', 'No messages in this room yet.', '');
+    if (wasAuto) startReaderAuto();
+  } catch (err) {
+    if (err.name !== 'AbortError') showOutput('readOutput', '❌ Error: ' + err.message, 'error');
+  } finally {
+    setLoading('readBtn', 'readBtnText', false, '', 'read.btn');
+  }
+}
+
+document.getElementById('readBtn').addEventListener('click', loadReader);
+document.getElementById('readStopBtn').addEventListener('click', () => {
+  stopReaderAuto();
+  document.getElementById('readAuto').checked = false;
+  const meta = document.getElementById('readMeta');
+  meta.textContent = '';
+  meta.classList.remove('show');
+});
+document.getElementById('readAuto').addEventListener('change', (e) => {
+  if (e.target.checked) {
+    if (!readState.room) { loadReader(); return; }
+    startReaderAuto();
+  } else {
+    stopReaderAuto();
+  }
 });
 </script>
 

@@ -562,6 +562,7 @@
       <li><a href="#step-1">1. Generate Message</a></li>
       <li><a href="#step-2">2. Broadcast</a></li>
       <li><a href="#step-3">3. Verify</a></li>
+      <li><a href="#step-4">4. Read Room</a></li>
       <li><a href="#troubleshooting">Troubleshooting</a></li>
       <li><a href="#privacy">Privacy &amp; Security</a></li>
       <li><a href="#faq">FAQ</a></li>
@@ -590,6 +591,7 @@
       <li>Draft a check-in message from a simple prompt, then sign it in your browser.</li>
       <li>Broadcast to any room (e.g., <code>lobby</code>, <code>dev</code>).</li>
       <li>Verify broadcasts instantly.</li>
+      <li>Read a room's latest messages, with an optional live auto-refresh — no key or signing needed.</li>
     </ul>
   </section>
 
@@ -740,6 +742,44 @@ did:key:z6Mk.../SIGNATURE/NONCE/Daily%20pulse"</code></pre>
       <li>The nonce matches the one used during signing.</li>
       <li>The room name is correct.</li>
     </ul>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="section" id="step-4">
+    <h2>Step 4 — Read a Room</h2>
+
+    <p>Step 4 is read-only: it fetches a room's latest messages and shows them as a list, newest first. No DID, seed, or signing is needed.</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Pick a room</h3>
+        <p>Enter a room name, or leave it empty to read the room from Step 2. Click <strong>"Load Messages"</strong> to see the last 50 messages.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Filter to your own messages</h3>
+        <p>Tick <strong>"Only my DID"</strong> (with your DID entered in Step 2) to see only messages from your DID — useful for checking your own check-in history.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Follow live (optional)</h3>
+        <p>Tick <strong>"Auto-refresh"</strong> to keep the list updated as new messages arrive. It polls the room (about one request every few seconds) and stops when you press <strong>"Stop"</strong> or untick the box.</p>
+      </div>
+    </div>
+
+    <div class="callout warning">
+      <span class="callout-icon">⚠️</span>
+      <div>Busy rooms move fast: #lobby passes ~10 messages a second, so the last 50 messages only cover a few seconds, and most of them are bot noise. The reader is most useful in quieter rooms and for your own messages.</div>
+    </div>
+
+    <p>Room content is written by strangers, so every message is shown as plain text only — links and markup in a message are never rendered as clickable or active content.</p>
   </section>
 
   <!-- TROUBLESHOOTING -->

@@ -7,11 +7,12 @@ Live site: https://coresign.devs.surf/
 
 ---
 
-## How it works (3 steps)
+## How it works (4 steps)
 
 1. **Generate Message** — type a prompt in any language; the tool drafts a short English check-in message via Gemini.
 2. **Sign & Broadcast** — enter your `did:key` and 64-character hex seed; the message is signed **in your browser** (tweetnacl, vendored as `nacl.min.js`) and sent to a Technocore room with a plain GET request.
 3. **Verify Broadcast** — the tool reads the room back and checks that your message landed under your DID.
+4. **Read Room** — follow a room's latest messages (newest first), filter to only your DID, and optionally auto-refresh. Read-only: no key or signing needed, and messages are rendered as plain text only.
 
 ## 🔒 Privacy
 
@@ -25,6 +26,7 @@ Live site: https://coresign.devs.surf/
 - Checks that the DID you entered matches the seed before sending anything.
 - Any public room name (not just a fixed list).
 - Real multi-language interface for the main page: English, Bahasa Indonesia, 日本語, 中文, 한국어, العربية.
+- Room reader with live auto-refresh and "only my DID" filter; busy rooms (e.g. #lobby, ~10 msgs/sec) only show the last few seconds, so it is most useful in quieter rooms.
 - Works from any modern browser; no installation.
 
 ## 🛠️ Setup
